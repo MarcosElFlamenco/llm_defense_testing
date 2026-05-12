@@ -1,4 +1,11 @@
 MODELS = {
+    "llama2": {
+        'model_path': 'meta-llama/Llama-3.2-1B',
+        'tokenizer_path': 'meta-llama/Llama-3.2-1B',
+        'conversation_template': 'llama-3'  ## This probably won't exist, I'll wait for the warning
+    }
+}
+BACKUP_MODELS = {
     'llama2': {
         'model_path': '/shared_data0/arobey1/llama-2-7b-chat-hf',
         'tokenizer_path': '/shared_data0/arobey1/llama-2-7b-chat-hf',
