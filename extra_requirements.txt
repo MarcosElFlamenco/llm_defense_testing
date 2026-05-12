@@ -1,0 +1,6 @@
+torch
+pandas
+fastchat
+psutil
+accelerate
+requests
