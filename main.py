@@ -44,8 +44,13 @@ def main(args):
     for i, prompt in tqdm(enumerate(attack.prompts)):
         output = defense(prompt)
         jb = defense.is_jailbroken(output)
-        jailbroken_results.append(jb)
+        # According to the naming this jb should be a boolean
+        print(jb)
 
+        jailbroken_results.append(jb)
+        # So this will be a list of booleans
+
+    num_errors = sum(jailbroken_results)
     print(f'We made {num_errors} errors')
 
     # Save results to a pandas DataFrame
