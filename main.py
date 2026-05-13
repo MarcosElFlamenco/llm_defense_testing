@@ -18,11 +18,12 @@ def main(args):
     
     # Instantiate the targeted LLM
     config = model_configs.MODELS[args.target_model]
+    device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
     target_model = language_models.LLM(
         model_path=config['model_path'],
         tokenizer_path=config['tokenizer_path'],
         conv_template_name=config['conversation_template'],
-        device='cuda:0'
+        device=device
     )
 
     # Create SmoothLLM instance
