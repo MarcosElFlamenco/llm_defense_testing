@@ -18,7 +18,7 @@ class LLM:
         # Language model
         self.model = AutoModelForCausalLM.from_pretrained(
             model_path,
-            torch_dtype=torch.float16,
+            dtype=torch.float16,
             trust_remote_code=True,
             low_cpu_mem_usage=True,
             use_cache=True,
