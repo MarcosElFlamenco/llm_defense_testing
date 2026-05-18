@@ -33,6 +33,42 @@ class Defense:
             prefix in s for prefix in self.TEST_PREFIXES
         ])
 
+class Empty(Defense):
+    """SmoothLLM defense.
+    
+    Title: SmoothLLM: Defending Large Language Models Against 
+                Jailbreaking Attacks
+    Authors: Alexander Robey, Eric Wong, Hamed Hassani, George J. Pappas
+    Paper: https://arxiv.org/abs/2310.03684
+    """
+
+    def __init__(self, 
+        target_model,
+    ):
+        super(Empty, self).__init__(target_model)
+
+    @torch.no_grad()
+    def __call__(self, prompt, batch_size=64, max_new_len=100):
+
+        all_inputs = []
+
+
+
+        # Run a forward pass through the LLM for each perturbed copy
+        output = self.target_model(
+            batch=[prompt.full_prompt], 
+            max_new_tokens=prompt.max_new_tokens
+        )
+
+        torch.cuda.empty_cache()
+
+        # Check whether the outputs jailbreak the LLM
+        is_jailbroken = self.is_jailbroken(output)
+
+        return output
+
+
+
 class SmoothLLM(Defense):
 
     """SmoothLLM defense.
@@ -135,7 +171,7 @@ class SmoothLLM_MV(Defense):
             all_inputs.append(prompt_copy.full_prompt)
 
         # Iterate each batch of inputs
-        all_outputs = []
+        outputs = []
         for i in range(self.num_copies // batch_size + 1):
 
             # Get the current batch of inputs
@@ -148,16 +184,18 @@ class SmoothLLM_MV(Defense):
                 batch=batch, 
                 max_new_tokens=min(prompt.max_new_tokens,max_new_len)
             )
-
-            all_outputs.extend(batch_outputs)
+            print(f'defenses 151: batch outputs is {batch_outputs}')
+            output = max(set(batch_outputs), key=batch_outputs.count)
+            outputs.append(output)
             torch.cuda.empty_cache()
+        ## Unsafe code from here
 
         # Check whether the outputs jailbreak the LLM
-        are_copies_jailbroken = [self.is_jailbroken(s) for s in all_outputs]
+        are_copies_jailbroken = self.is_jailbroken(outputs)
         if len(are_copies_jailbroken) == 0:
             raise ValueError("LLM did not generate any outputs.")
 
-        outputs_and_jbs = zip(all_outputs, are_copies_jailbroken)
+        outputs_and_jbs = zip(outputs, are_copies_jailbroken)
 
         # Determine whether SmoothLLM was jailbroken
         jb_percentage = np.mean(are_copies_jailbroken)
