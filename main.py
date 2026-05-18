@@ -23,8 +23,7 @@ def main(args):
         model_path=config['model_path'],
         tokenizer_path=config['tokenizer_path'],
         conv_template_name=config['conversation_template'],
-        device=device,
-        local_files_only=True
+        device=device
     )
 
     # Create SmoothLLM instance
@@ -50,6 +49,7 @@ def main(args):
             print(f"ADVERSARIAL PROMPT:\n {prompt.perturbable_prompt}")
             print(f"OUTPUT: \n{output}")
             print(f"JAILBROKEN: \n {jb}")
+            print(f"-------------------------------------------------\n-------------------------------------------------\n")
     num_errors = sum(jailbroken_results)
     print(f'We made {num_errors} errors')
 
