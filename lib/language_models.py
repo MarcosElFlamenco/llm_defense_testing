@@ -43,6 +43,7 @@ class LLM:
             self.tokenizer.pad_token = self.tokenizer.unk_token
         if not self.tokenizer.pad_token:
             self.tokenizer.pad_token = self.tokenizer.eos_token
+        
 
         # Fastchat conversation template
         self.conv_template = get_conversation_template(

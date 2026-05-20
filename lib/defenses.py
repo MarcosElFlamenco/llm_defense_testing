@@ -49,8 +49,6 @@ class Empty(Defense):
 
         all_inputs = []
 
-
-
         # Run a forward pass through the LLM for each perturbed copy
         output = self.target_model(
             batch=[prompt.full_prompt], 

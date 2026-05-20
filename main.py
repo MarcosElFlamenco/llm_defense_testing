@@ -28,8 +28,8 @@ def main(args):
         conv_template_name=config['conversation_template'],
         quantize=args.quantize,
         device=device
-
     )
+
     print(f"Successfully loaded target model: {args.target_model} on device: {device}")
     # Create SmoothLLM instance
     defense = get_defense(
