@@ -7,6 +7,8 @@ download_model:
 
 
 TARGET_MODEL = llama2
+LOGFILE = data/GCG/llama2_behaviors_mini.json
+
 
 vanilla_inference:
 	python main.py \
@@ -14,7 +16,7 @@ vanilla_inference:
 		--results_dir ./results \
 		--target_model $(TARGET_MODEL) \
 		--attack GCG \
-		--attack_logfile data/GCG/llama2_behaviors_mini.json \
+		--attack_logfile $(LOGFILE) \
 		--verbose
 
 smooth_llm:
@@ -23,7 +25,7 @@ smooth_llm:
 		--results_dir ./results \
 		--target_model $(TARGET_MODEL) \
 		--attack GCG \
-		--attack_logfile data/GCG/llama2_behaviors_mini.json \
+		--attack_logfile $(LOGFILE) \
 		--smoothllm_pert_type RandomSwapPerturbation \
 		--smoothllm_pert_pct 10 \
 		--smoothllm_num_copies 3 \
