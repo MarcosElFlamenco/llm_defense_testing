@@ -1,12 +1,12 @@
 ##This model is for testing code
-MODELS = {
+MINI_MODELS = {
     "llama2": {
         'model_path': 'meta-llama/Llama-3.2-1B',
         'tokenizer_path': 'meta-llama/Llama-3.2-1B',
         'conversation_template': 'llama-3'  ## This probably won't exist, I'll wait for the warning
     }
 }
-LARGE_MODELS = {
+MODELS = {
     'llama2': {
         'model_path': 'meta-llama/Llama-2-7b-chat-hf',
         'tokenizer_path': 'meta-llama/Llama-2-7b-chat-hf',
