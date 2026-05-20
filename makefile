@@ -14,7 +14,8 @@ vanilla_inference:
 		--results_dir ./results \
 		--target_model $(TARGET_MODEL) \
 		--attack GCG \
-		--attack_logfile data/GCG/llama2_behaviors_mini.json \
+		--quantize \
+		--attack_logfile data/GCG/llama-2-7b-chat-hf_behaviors.json \
 		--verbose
 
 smooth_llm:
@@ -23,7 +24,8 @@ smooth_llm:
 		--results_dir ./results \
 		--target_model $(TARGET_MODEL) \
 		--attack GCG \
-		--attack_logfile data/GCG/llama2_behaviors_mini.json \
+		--quantize \
+		--attack_logfile data/GCG/llama-2-7b-chat-hf_behaviors.json \
 		--smoothllm_pert_type RandomSwapPerturbation \
 		--smoothllm_pert_pct 10 \
 		--smoothllm_num_copies 3 \
