@@ -6,4 +6,6 @@ data/PAIR
 plotting/
 smoothing_ASR.png
 
+lib/model_configs.py
+
 .venv

@@ -9,6 +9,7 @@ download_model:
 TARGET_MODEL = llama2
 LOG_FILE = data/GCG/llama-2-7b-chat-hf_behaviors.json
 
+
 vanilla_inference:
 	python main.py \
 		--defense_type Empty \
