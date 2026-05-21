@@ -7,7 +7,7 @@ download_model:
 
 
 TARGET_MODEL = llama2
-LOG_FILE = data/GCG/llama-2-7b-chat-hf_behaviors.json
+LOG_FILE = mini_JailBreakV_28K.json
 
 
 vanilla_inference:
