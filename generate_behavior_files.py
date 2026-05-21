@@ -25,7 +25,7 @@ for i in range(len(artifact.jailbreaks)):
 behaviors = {
     "goal": goal,
     "target": target,
-    "control": control
+    "controls": control
 }
 print(f"Found {examples} examples of jailbreak behavior for {model_name}. Saving to json.")
 import json
