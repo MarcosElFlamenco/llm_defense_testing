@@ -16,7 +16,6 @@ vanilla_inference:
 		--results_dir ./results \
 		--target_model $(TARGET_MODEL) \
 		--attack GCG \
-		--quantize \
 		--attack_logfile $(LOG_FILE) \
 		--verbose
 
