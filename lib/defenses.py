@@ -3,27 +3,9 @@ import copy
 import random
 import numpy as np
 
+
 import lib.perturbations as perturbations
-
-
-def generate(model, tokenizer, input_ids, assistant_role_slice, gen_config=None):
-    if gen_config is None:
-        gen_config = model.generation_config
-        gen_config.max_new_tokens = 64
-    if input_ids.dim() > 1:
-        input_ids = input_ids.squeeze(0)
-    input_ids = input_ids[:assistant_role_slice.stop].to(model.device).unsqueeze(0)
-    attn_masks = torch.ones_like(input_ids).to(model.device)
-    output_ids = model.generate(
-        input_ids,
-        attention_mask=attn_masks,
-        generation_config=gen_config,
-        pad_token_id=tokenizer.pad_token_id,
-        top_p=0.9,
-        do_sample=True,
-        temperature=0.7,
-    )[0]
-    return output_ids[assistant_role_slice.stop:]
+from AutoDAN.autodan_hga_eval import generate
 
 class Defense:
 
@@ -71,17 +53,18 @@ class Empty(Defense):
             self.target_model.tokenizer(prompt.full_prompt).input_ids,
             device=self.target_model.model.device,
         )
-        assistant_role_slice = slice(None, len(input_ids))
+        assistant_role_slice = slice(None, len(input_ids)) ##
 
-        gen_config = self.target_model.model.generation_config
+        gen_config = self.target_model.generation_config
         gen_config.max_new_tokens = max_new_len
 
+        ## I need to implement suffix manager
         output_ids = generate(
             self.target_model.model,
             self.target_model.tokenizer,
-            input_ids,
-            assistant_role_slice,
-            gen_config=gen_config,
+            suffix_manager.get_input_ids(adv_string=adv_suffix).to(device), ## I should check the way this is computed
+            suffix_manager._assistant_role_slice, ## Check this
+            gen_config=gen_config,              ## OK this is loaded from the same function
         )
 
         return self.target_model.tokenizer.decode(output_ids).strip()

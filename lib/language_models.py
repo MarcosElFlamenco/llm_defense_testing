@@ -3,6 +3,8 @@ from fastchat.model import get_conversation_template
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig 
 from pathlib import Path
 
+from AutoDAN.utils.string_utils import load_conversation_template
+
 class LLM:
 
     """Forward pass through a LLM."""
@@ -46,7 +48,7 @@ class LLM:
         
 
         # Fastchat conversation template
-        self.conv_template = get_conversation_template(
+        self.conv_template = load_conversation_template(
             conv_template_name
         )
         if self.conv_template.name == 'llama-2':
