@@ -45,22 +45,31 @@ class Empty(Defense):
         super(Empty, self).__init__(target_model)
 
     @torch.no_grad()
-    def __call__(self, prompt, batch_size=64, max_new_len=100):
+    def __call__(self, prompt, batch_size=64, max_new_len=64):
 
-        all_inputs = []
+        input_ids = self.target_model.tokenizer(
+            prompt.full_prompt,
+            return_tensors='pt'
+        ).input_ids.to(self.target_model.model.device)
+        attn_masks = torch.ones_like(input_ids).to(self.target_model.model.device)
 
-        # Run a forward pass through the LLM for each perturbed copy
-        output = self.target_model(
-            batch=[prompt.full_prompt], 
-            max_new_tokens=prompt.max_new_tokens
-        )
+        gen_config = self.target_model.model.generation_config
+        gen_config.max_new_tokens = max_new_len
 
-        torch.cuda.empty_cache()
+        output_ids = self.target_model.model.generate(
+            input_ids,
+            attention_mask=attn_masks,
+            generation_config=gen_config,
+            pad_token_id=self.target_model.tokenizer.pad_token_id,
+            top_p=0.9,
+            do_sample=True,
+            temperature=0.7,
+        )[0]
 
-        # Check whether the outputs jailbreak the LLM
-        is_jailbroken = self.is_jailbroken(output)
-
-        return output[0]
+        return self.target_model.tokenizer.decode(
+            output_ids[input_ids.shape[-1]:],
+            skip_special_tokens=True
+        ).strip()
 
 
 
