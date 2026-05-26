@@ -129,40 +129,50 @@ def model_paths(model_name):
 def _read_json_records(path, prompt_field, goal_field):
     with open(path, "r") as f:
         data = json.load(f)
-
+    
     records = []
-    if isinstance(data, list):
-        for idx, item in enumerate(data):
-            if isinstance(item, str):
-                records.append({"id": str(idx), "prompt": item, "goal": ""})
-                continue
+    goal = data["goal"]
+    controls = data["controls"]
+    for i in range(len(controls)):
+        prompt = goal[i] + controls[i]
+        rec = {
+            "prompt": prompt
+        }
+        records.append(rec)
 
-            if not isinstance(item, dict):
-                raise ValueError("JSON list items must be either strings or objects.")
+    if False:
+        if isinstance(data, list):
+            for idx, item in enumerate(data):
+                if isinstance(item, str):
+                    records.append({"id": str(idx), "prompt": item, "goal": ""})
+                    continue
 
-            prompt = item.get(prompt_field, item.get("final_suffix", item.get("text", "")))
-            if not isinstance(prompt, str) or not prompt.strip():
-                continue
-            goal = item.get(goal_field, "")
-            records.append({"id": str(idx), "prompt": prompt, "goal": goal if isinstance(goal, str) else ""})
+                if not isinstance(item, dict):
+                    raise ValueError("JSON list items must be either strings or objects.")
 
-    elif isinstance(data, dict):
-        # Supports files like AutoDAN result dictionaries keyed by behavior ID.
-        for key, item in data.items():
-            if isinstance(item, str):
-                records.append({"id": str(key), "prompt": item, "goal": ""})
-                continue
+                prompt = item.get(prompt_field, item.get("final_suffix", item.get("text", "")))
+                if not isinstance(prompt, str) or not prompt.strip():
+                    continue
+                goal = item.get(goal_field, "")
+                records.append({"id": str(idx), "prompt": prompt, "goal": goal if isinstance(goal, str) else ""})
 
-            if not isinstance(item, dict):
-                continue
+        elif isinstance(data, dict):
+            # Supports files like AutoDAN result dictionaries keyed by behavior ID.
+            for key, item in data.items():
+                if isinstance(item, str):
+                    records.append({"id": str(key), "prompt": item, "goal": ""})
+                    continue
 
-            prompt = item.get(prompt_field, item.get("final_suffix", item.get("text", "")))
-            if not isinstance(prompt, str) or not prompt.strip():
-                continue
-            goal = item.get(goal_field, "")
-            records.append({"id": str(key), "prompt": prompt, "goal": goal if isinstance(goal, str) else ""})
-    else:
-        raise ValueError("Unsupported JSON structure. Use a list or object.")
+                if not isinstance(item, dict):
+                    continue
+
+                prompt = item.get(prompt_field, item.get("final_suffix", item.get("text", "")))
+                if not isinstance(prompt, str) or not prompt.strip():
+                    continue
+                goal = item.get(goal_field, "")
+                records.append({"id": str(key), "prompt": prompt, "goal": goal if isinstance(goal, str) else ""})
+        else:
+            raise ValueError("Unsupported JSON structure. Use a list or object.")
 
     return records
 
@@ -171,15 +181,6 @@ def load_inputs(input_path, prompt_field, goal_field):
     path = Path(input_path)
     if not path.exists():
         raise FileNotFoundError(f"Input file not found: {input_path}")
-
-    if path.suffix.lower() == ".txt":
-        records = []
-        with open(path, "r") as f:
-            for idx, line in enumerate(f):
-                prompt = line.strip()
-                if prompt:
-                    records.append({"id": str(idx), "prompt": prompt, "goal": ""})
-        return records
 
     if path.suffix.lower() == ".json":
         return _read_json_records(path, prompt_field, goal_field)
