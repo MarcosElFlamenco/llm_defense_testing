@@ -17,50 +17,20 @@ from defense_factory import get_defense
 import numpy as np
 import torch.nn as nn
 
-from utils.opt_utils import (
-    autodan_sample_control,
-    autodan_sample_control_hga,
-    get_score_autodan,
-    load_model_and_tokenizer,
-)
-from utils.string_utils import autodan_SuffixManager, load_conversation_template
-from utils.eval_utils import check_for_attack_success
-
-
-##CODE START
-
-SEED=20
-
-MODEL_PATH_DICTS = {
-    "llama2": "~/.cache/huggingface/hub/models--meta-llama--Llama-2-7b-chat-hf/snapshots/f5db02db724555f92da89c216ac04704f23d4590/",
-    "llama3": "~/.cache/huggingface/hub/models--meta-llama--Llama-3.2-1B/snapshots/4e20de362430cd3b72f300e6b0f18e50e7166e08",
-    "vicuna": "./models/vicuna/vicuna-7b-v1.3",
-    "guanaco": "./models/guanaco/guanaco-7B-HF",
-    "WizardLM": "./models/WizardLM/WizardLM-7B-V1.0",
-    "mpt-chat": "./models/mpt/mpt-7b-chat",
-    "mpt-instruct": "./models/mpt/mpt-7b-instruct",
-    "falcon": "./models/falcon/falcon-7b-instruct",
-}
-
-
-def set_seed(seed=SEED):
-    torch.manual_seed(seed)
-    np.random.seed(seed)
-    random.seed(seed)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(seed)
-
+from utils.opt_utils import load_model_and_tokenizer
+from utils.string_utils import load_conversation_template
+from utils.eval_utils import check_for_attack_success, set_seed
+from utils.references import MODEL_PATH_DICTS
 
 def main(args):
     start_time = time.time()
+
     # Create output directories
     os.makedirs(args.results_dir, exist_ok=True)
-
 
     set_seed()
     device = f"cuda:{args.device}"
     model_path = os.path.expanduser(MODEL_PATH_DICTS[args.target_model])
-    print(f"model path is {model_path}")
 
     template_name = args.target_model
 
@@ -71,8 +41,9 @@ def main(args):
         device=device,
     )
 
-    conv_template = load_conversation_template(template_name)
+    print(f"Success: loaded model from path {model_path}")
 
+    conv_template = load_conversation_template(template_name)
 
     defense = get_defense(
         defense_type=args.defense_type,
@@ -107,7 +78,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--results_dir',
         type=str,
-        default='./results'
+        default='./defense_testing'
     )
     parser.add_argument(
         '--trial',
@@ -156,7 +127,6 @@ if __name__ == '__main__':
         action="store_true"
     )
 
-
     parser.add_argument(
         '--smoothllm_pert_type',
         type=str,
@@ -178,7 +148,11 @@ if __name__ == '__main__':
         ]
     )
 
-    parser.add_argument("--device", type=int, default=0)
+    parser.add_argument(
+        "--device", 
+        type=int, 
+        default=0
+    )
 
     args = parser.parse_args()
     main(args)

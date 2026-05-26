@@ -94,12 +94,6 @@ def generate(model, tokenizer, input_ids, assistant_role_slice, gen_config=None)
     )[0]
     return output_ids[assistant_role_slice.stop:]
 
-
-
-def log_init():
-    return {"loss": [], "suffix": [], "time": [], "respond": [], "success": []}
-
-
 def run_eval(args, attack_mode="none"):
     if attack_mode not in {"ga", "hga","none"}:
         raise ValueError("attack_mode must be 'ga' or 'hga' or 'none'")
@@ -129,7 +123,6 @@ def run_eval(args, attack_mode="none"):
     adv_suffix = example["final_suffix"]
 
 
-    start_time = time.time()
 
     with torch.no_grad():
 

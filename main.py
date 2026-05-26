@@ -31,6 +31,7 @@ def main(args):
     )
 
     print(f"Successfully loaded target model: {args.target_model} on device: {device}")
+
     # Create SmoothLLM instance
     defense = get_defense(
         defense_type=args.defense_type,
