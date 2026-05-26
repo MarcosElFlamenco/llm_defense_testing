@@ -31,6 +31,18 @@ from utils.eval_utils import check_for_attack_success
 
 SEED=20
 
+MODEL_PATH_DICTS = {
+    "llama2": "~/.cache/huggingface/hub/models--meta-llama--Llama-2-7b-chat-hf/snapshots/f5db02db724555f92da89c216ac04704f23d4590/",
+    "llama3": "~/.cache/huggingface/hub/models--meta-llama--Llama-3.2-1B/snapshots/4e20de362430cd3b72f300e6b0f18e50e7166e08",
+    "vicuna": "./models/vicuna/vicuna-7b-v1.3",
+    "guanaco": "./models/guanaco/guanaco-7B-HF",
+    "WizardLM": "./models/WizardLM/WizardLM-7B-V1.0",
+    "mpt-chat": "./models/mpt/mpt-7b-chat",
+    "mpt-instruct": "./models/mpt/mpt-7b-instruct",
+    "falcon": "./models/falcon/falcon-7b-instruct",
+}
+
+
 def set_seed(seed=SEED):
     torch.manual_seed(seed)
     np.random.seed(seed)
@@ -47,10 +59,10 @@ def main(args):
 
     set_seed()
     device = f"cuda:{args.device}"
-    model_path = os.path.expanduser(MODEL_PATH_DICTS[args.model])
+    model_path = os.path.expanduser(MODEL_PATH_DICTS[args.target_model])
     print(f"model path is {model_path}")
 
-    template_name = args.model
+    template_name = args.target_model
 
     target_model , tokenizer = load_model_and_tokenizer(
         model_path,
@@ -107,7 +119,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--target_model',
         type=str,
-        default='vicuna',
+        default='llama2',
         choices=['vicuna', 'llama2']
     )
 
