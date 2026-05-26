@@ -19,7 +19,7 @@ from utils.opt_utils import (
     load_model_and_tokenizer,
 )
 from utils.string_utils import autodan_SuffixManager, load_conversation_template
-from references import MODEL_PATH_DICTS, DEVELOPER_DICT, TEST_PREFIXES
+from utils.references import MODEL_PATH_DICTS, DEVELOPER_DICT, TEST_PREFIXES
 
 SEED = 20
 
