@@ -32,7 +32,7 @@ smooth_llm:
 		--smoothllm_num_copies 3 \
 		--verbose
 
-compute_autodan:
+autodan:
 	python AutoDAN/autodan_eval.py \
 		--attack_mode hga
 

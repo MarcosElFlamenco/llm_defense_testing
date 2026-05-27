@@ -1,7 +1,7 @@
 import gc
 import numpy as np
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, logging
 import random
 import openai
 from tqdm import tqdm
@@ -15,7 +15,7 @@ from collections import defaultdict, OrderedDict
 from utils.string_utils import autodan_SuffixManager
 import sys
 import time
-
+logging.set_verbosity_error() 
 
 def forward(*, model, input_ids, attention_mask, batch_size=512):
     logits = []
