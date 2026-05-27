@@ -27,6 +27,7 @@ def generate(model, tokenizer, input_ids, assistant_role_slice, gen_config=None)
     if gen_config is None:
         gen_config = model.generation_config
         gen_config.max_new_tokens = 64
+        gen_config.pad_token_id = tokenizer.pad_token_id
     print(f"Generation config: {gen_config}")  # Debugging line to check generation config
     input_ids = input_ids[:assistant_role_slice.stop].to(model.device).unsqueeze(0)
     attn_masks = torch.ones_like(input_ids).to(model.device)
@@ -34,10 +35,6 @@ def generate(model, tokenizer, input_ids, assistant_role_slice, gen_config=None)
         input_ids,
         attention_mask=attn_masks,
         generation_config=gen_config,
-        pad_token_id=tokenizer.pad_token_id,
-        top_p=0.9,
-        do_sample=True,
-        temperature=0.7,
     )[0]
     return output_ids[assistant_role_slice.stop:]
 
