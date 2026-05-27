@@ -1,13 +1,14 @@
-import copy
-import random
-
-import numpy as np
-import torch
 
 ## This suppresses a warning about duplicate arguments
 import warnings
 warnings.filterwarnings("ignore", message=".*max_new_tokens.*max_length.*")
 
+
+import copy
+import random
+
+import numpy as np
+import torch
 from utils.opt_utils import (
     autodan_sample_control,
     autodan_sample_control_hga,

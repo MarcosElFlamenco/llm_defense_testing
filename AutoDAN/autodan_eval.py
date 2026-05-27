@@ -1,3 +1,7 @@
+## This suppresses a warning about duplicate arguments
+import warnings
+warnings.filterwarnings("ignore", message=".*max_new_tokens.*max_length.*")
+
 import os, sys
 import gc
 import json
@@ -7,9 +11,6 @@ import pandas as pd
 import torch
 import torch.nn as nn
 from tqdm import tqdm
-## This suppresses a warning about duplicate arguments
-import warnings
-warnings.filterwarnings("ignore", message=".*max_new_tokens.*max_length.*")
 ## This makes imports simpler with the two nested directories
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "AutoDAN"))
 
