@@ -82,7 +82,8 @@ def main(args):
                          target=artifact["target"], 
                          adv_suffix=artifact["final_suffix"], 
                          batch_size=64, 
-                         max_new_len=64)
+                         max_new_len=64,
+                         gen_config=None)
         
         jailbroken = jailbreak_evaluator(output)
         if jailbroken:
@@ -102,7 +103,7 @@ def main(args):
 
         results[str(i)] = result
 
-        with open(f"{result_dir}/{args.model}.json", "w") as json_file:
+        with open(f"{args.result_dir}/{args.model}.json", "w") as json_file:
             json.dump(results, json_file, indent=4)
 
     print(f"Total inference time: {time.time() - start_time} seconds")
