@@ -7,8 +7,12 @@ import pandas as pd
 import torch
 import torch.nn as nn
 from tqdm import tqdm
-
+## This suppresses a warning about duplicate arguments
+import warnings
+warnings.filterwarnings("ignore", message=".*max_new_tokens.*max_length.*")
+## This makes imports simpler with the two nested directories
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "AutoDAN"))
+
 from utils.eval_utils import _sample_next_suffixes, _prepare_reference, log_init, set_seed, check_for_attack_success
 from utils.references import TEST_PREFIXES, MODEL_PATH_DICTS
 from utils.opt_utils import (
@@ -45,7 +49,6 @@ def run_autodan_eval(args, attack_mode="ga"):
     set_seed()
     device = f"cuda:{args.device}"
     model_path = os.path.expanduser(MODEL_PATH_DICTS[args.model])
-    print(f"model path is {model_path}")
 
     template_name = args.model
     batch_size = args.batch_size
