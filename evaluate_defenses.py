@@ -145,8 +145,8 @@ if __name__ == '__main__':
     parser.add_argument(
         '--attack',
         type=str,
-        default='GCG',
-        choices=['GCG', 'PAIR']
+        default='AUTODAN',
+        choices=['AUTODAN', 'PAIR', 'GCG']
     )
     parser.add_argument(
         '--attack_logfile',

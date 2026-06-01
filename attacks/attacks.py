@@ -42,17 +42,13 @@ class AutoDAN(Attack):
         with open(self.logfile, 'r') as f:
             log = json.load(f)
 
-        self.goals = log['goal']
-        self.targets = log['target']
-        self.final_suffixes = log['final_suffix']
-
         # Enables obj[i]
         self.prompts = [
-            self.create_prompt(g, c, t)
-            for (g, c, t) in zip(self.goals, self.final_suffixes, self.targets)
+            self.create_prompt(artifact["goal"], artifact["target"], artifact["final_suffix"])
+            for artifact in log.values()
         ]
 
-    def create_prompts(self, goal, final_suffix, target, max_new_len=100):
+    def create_prompt(self, goal, final_suffix, target, max_new_len=100):
 
         suffix_manager = autodan_SuffixManager(
             tokenizer=self.tokenizer,
