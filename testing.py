@@ -7,7 +7,7 @@ from easyjailbreak.models.openai_model import OpenaiModel
 path = "~/.cache/huggingface/hub/models--meta-llama--Llama-2-7b-chat-hf/snapshots/f5db02db724555f92da89c216ac04704f23d4590/"
 attack_model = from_pretrained(model_name_or_path=path,
                                model_name='llama2')
-target_model = from_pretrained(model_name_or_path=path
+target_model = from_pretrained(model_name_or_path=path,  
                                model_name='llama2')
 eval_model = from_pretrained(model_name_or_path=path,
                                model_name='llama2')
