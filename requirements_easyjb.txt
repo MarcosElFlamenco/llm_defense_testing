@@ -5,4 +5,4 @@ psutil
 accelerate
 requests
 transformers
-
+easyjailbreak
