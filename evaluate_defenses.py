@@ -83,10 +83,11 @@ def main(args):
     start_time = time.time()
     artifact_start_time = start_time
 
-    for i, (input_ids, assistant_role_slice) in enumerate(attack.prompts):
+    for i, prompt in enumerate(attack.prompts):
         print(f"Evaluating artifact {i}...")
+        print(f"Prompt is {prompt}")
         output = defense(input_ids = input_ids,
-                         assistant_role_slice=assistant_role_slice,
+                         assistant_role_slice=None, #TODO
                          gen_config=None,
                          batch_size=64, 
                          max_new_len=args.max_new_len,
