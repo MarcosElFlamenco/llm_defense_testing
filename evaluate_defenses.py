@@ -86,8 +86,8 @@ def main(args):
     for i, prompt in enumerate(attack.prompts):
         print(f"Evaluating artifact {i}...")
         print(f"Prompt is {prompt}")
-        output = defense(input_ids = input_ids,
-                         assistant_role_slice=None, #TODO
+        output = defense(input_ids = prompt.input_ids,
+                         assistant_role_slice=prompt.assistant_role_slice,
                          gen_config=None,
                          batch_size=64, 
                          max_new_len=args.max_new_len,
