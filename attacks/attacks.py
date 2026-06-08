@@ -62,8 +62,8 @@ class AutoDAN(Attack):
             target=target,
             adv_string=final_suffix,
         )
-        input_ids = suffix_manager.get_input_ids(adv_string=final_suffix).to(self.target_model.device),
-        assistant_role_slice = suffix_manager._assistant_role_slice,
+        input_ids = suffix_manager.get_input_ids(adv_string=final_suffix).to(self.target_model.device)
+        assistant_role_slice = suffix_manager._assistant_role_slice
 
         return DANPrompt(input_ids, assistant_role_slice)
 

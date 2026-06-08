@@ -85,7 +85,7 @@ def main(args):
 
     for i, prompt in enumerate(attack.prompts):
         print(f"Evaluating artifact {i}...")
-        print(f"Prompt is {prompt}")
+        print(f"Assistant role slice is {prompt.assistant_role_slice}")
         output = defense(input_ids = prompt.input_ids,
                          assistant_role_slice=prompt.assistant_role_slice,
                          gen_config=None,
