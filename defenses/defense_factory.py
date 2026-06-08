@@ -2,7 +2,7 @@
 from defenses.defenses import NoDefense
 
 DEFENSE_REGISTRY = {
-    "nodefense": NoDefense 
+    "nodefense": NoDefense
 }
 
 
