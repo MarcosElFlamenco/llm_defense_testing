@@ -101,9 +101,9 @@ def main(args):
         print(f"######################## OUTPUT ########################: \n {output} \n\n  ######################## JAILBROKEN: {jailbroken} \n INFERENCE TIME: {artifact_inference_time}s")
 
         result = {
-            "goal": artifact["goal"],
-            "target": artifact["target"],
-            "adv_suffix": artifact["final_suffix"],
+            "goal": prompt.goal,
+            "target": prompt.target,
+            "adv_suffix": prompt.final_suffix,
             "output": output,
             "time": artifact_inference_time,
             "jailbroken": jailbroken
