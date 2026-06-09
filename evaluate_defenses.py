@@ -111,7 +111,7 @@ def main(args):
 
         results[str(i)] = result
 
-        with open(f"{args.result_dir}/{args.model}.json", "w") as json_file:
+        with open(f"{args.results_dir}/{args.target_model}.json", "w") as json_file:
             json.dump(results, json_file, indent=4)
 
     print(f"Total inference time: {time.time() - start_time} seconds")
