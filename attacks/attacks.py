@@ -66,7 +66,6 @@ class AutoDAN(Attack):
             target=target,
             adv_string=final_suffix,
         )
-
         prompt = suffix_manager.get_prompt(adv_string=final_suffix)
         input_ids = suffix_manager.get_input_ids_from_prompt(text_prompt=prompt).to(self.target_model.device)
         assistant_role_slice = suffix_manager._assistant_role_slice
