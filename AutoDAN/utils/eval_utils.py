@@ -26,6 +26,9 @@ def set_seed(seed=SEED):
         torch.cuda.manual_seed_all(seed)
 
 def update_gen_config(gen_config, args):
+    if args.max_new_tokens and args.max_new_tokens > gen_config.max_length - 512:
+        print(f'Warning: max_new_tokens {args.max_new_tokens} is too large for the model\'s max_length {gen_config.max_length}. Setting max_new_tokens to {gen_config.max_length - 512}.')
+        args.max_new_tokens = gen_config.max_length - 512
     gen_config.max_new_tokens = args.max_new_tokens
     gen_config.max_length = None
     if args.do_sample == False:
