@@ -174,7 +174,7 @@ def run_autodan_eval(args, attack_mode="ga"):
 
         os.makedirs(result_dir, exist_ok=True)
         with open(f"{result_dir}/{args.model}_{args.start}_{args.save_suffix}.json", "w") as json_file:
-            json.dump(infos, json_file, ident=4)
+            json.dump(infos, json_file, indent=4)
 
 
 if __name__ == "__main__":
