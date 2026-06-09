@@ -68,7 +68,7 @@ class AutoDAN(Attack):
         )
         ##TODO break this function in to so as to have the textual input
         prompt = suffix_manager.get_prompt(adv_string=final_suffix)
-        input_ids = suffix_manager.get_input_ids_from_prompt(adv_string=final_suffix).to(self.target_model.device)
+        input_ids = suffix_manager.get_input_ids_from_prompt(text_prompt=prompt).to(self.target_model.device)
         assistant_role_slice = suffix_manager._assistant_role_slice
 
         return DANPrompt(goal, target, final_suffix, prompt, input_ids, assistant_role_slice)
