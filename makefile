@@ -45,13 +45,12 @@ autodan:
 	python AutoDAN/autodan_eval.py \
 		--attack_mode hga \
 		--max_new_tokens 128 \
-		--debug
 
 rebuilding:
 	python rebuilding_inference.py \
 		--attack_mode hga \
 		--max_new_tokens 128 \
-		--path ./results/autodan_hga/llama2_0_normal.json
+		--path ./AutoDAN/results/autodan_hga/llama2_0_normal_debug.json
 		--debug
 
 generate_behavior_files:
