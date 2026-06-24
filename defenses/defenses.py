@@ -1,11 +1,10 @@
+
 import torch
 import numpy as np
 import gc
 from AutoDAN.utils.string_utils import autodan_SuffixManager
-from AutoDAN.utils.eval_utils import generate
+from AutoDAN.utils.eval_utils import generate, generate_from_user_text
 #import lib.perturbations as perturbations
-
-
 class Defense:
 
     TEST_PREFIXES = [
@@ -54,13 +53,13 @@ class NoDefense(Defense):
 
         input_ids = suffix_manager.get_input_ids_from_prompt(text_prompt=text_prompt).to(self.target_model.device)
         assistant_role_slice = suffix_manager._assistant_role_slice
-        
+
+        input_ids_assistant = input_ids[:assistant_role_slice.stop]
+        input_ids_user_text = input_ids_assistant[1,-1]
         gen_str = self.tokenizer.decode(
-            generate(
+            generate_from_user_text(
                 self.target_model,
-                self.tokenizer,
-                input_ids,
-                assistant_role_slice,
+                input_ids_user_text,
                 gen_config=gen_config
             )
         ).strip()

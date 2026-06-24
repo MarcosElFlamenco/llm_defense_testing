@@ -18,6 +18,12 @@ from utils.references import DEVELOPER_DICT, TEST_PREFIXES
 
 SEED = 21
 
+START_TOKEN = "[INST]"
+END_TOKEN = "[/INST]"
+inst_start_index = 1
+inst_end_index = 29962
+
+
 def set_seed(seed=SEED):
     torch.manual_seed(seed)
     np.random.seed(seed)
@@ -41,19 +47,29 @@ def update_gen_config(gen_config, args):
 def get_developer(model_name):
     return DEVELOPER_DICT[model_name]
 
+def generate_from_user_text(model, input_ids, gen_config=None):
+    if gen_config is None:
+        gen_config = model.generation_config
+        gen_config.max_new_tokens = 64
+        gen_config.pad_token_id = tokenizer.pad_token_id
+    input_ids = input_ids.to(model.device).unsqueeze(0)
+    print(f"input_ids are: {input_ids}, of length {input_ids.size(1)}")
+    start_index = input_ids.size(1)
+    attn_masks = torch.ones_like(input_ids).to(model.device)
+    output_ids = model.generate(
+        input_ids,
+        attention_mask=attn_masks,
+        generation_config=gen_config,
+    )[0]
+    return output_ids[start_index:]
+
+
 def generate(model, tokenizer, input_ids, assistant_role_slice, gen_config=None):
     if gen_config is None:
         gen_config = model.generation_config
         gen_config.max_new_tokens = 64
         gen_config.pad_token_id = tokenizer.pad_token_id
-    print(f"GENERATE LOOP")
-    print(f"input_ids: {input_ids} of length {input_ids.shape}")
-    print(f"assistant_role_slice: {assistant_role_slice}")
-    
     input_ids = input_ids[:assistant_role_slice.stop].to(model.device).unsqueeze(0)
-
-    print(f"after truncation, input_ids: {input_ids} of length {input_ids.shape}")
-    print(f"which, in string form, is: {tokenizer.decode(input_ids)}")
     attn_masks = torch.ones_like(input_ids).to(model.device)
     output_ids = model.generate(
         input_ids,
