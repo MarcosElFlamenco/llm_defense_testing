@@ -116,8 +116,10 @@ def main(args):
         }
 
         results[str(i)] = result
-
-        with open(f"{args.results_dir}/{args.target_model}.json", "w") as json_file:
+         
+        full_results_dir = f"{args.results_dir}/{args.attack}/{args.defense_type}"
+        os.makedirs(full_results_dir, exist_ok=True)
+        with open(f"{full_results_dir}/{args.target_model}.json", "w") as json_file:
             json.dump(results, json_file, indent=4)
 
     print(f"Total inference time: {time.time() - start_time} seconds")
@@ -132,7 +134,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--results_dir',
         type=str,
-        default='./defense_testing'
+        default='./defense_testing_results'
     )
     parser.add_argument(
         '--trial',
