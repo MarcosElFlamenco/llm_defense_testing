@@ -55,7 +55,7 @@ class NoDefense(Defense):
         assistant_role_slice = suffix_manager._assistant_role_slice
 
         input_ids_assistant = input_ids[:assistant_role_slice.stop]
-        input_ids_user_text = input_ids_assistant[1,-1]
+        input_ids_user_text = input_ids_assistant[1:-1]
         gen_str = self.tokenizer.decode(
             generate_from_user_text(
                 self.target_model,
