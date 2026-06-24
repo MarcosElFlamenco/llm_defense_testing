@@ -52,13 +52,8 @@ class NoDefense(Defense):
 
     @torch.no_grad()
     def __call__(self, user_text_prompt, gen_config, batch_size=64):
-        user_start_token = "[INST] "
-        user_end_token = " [/INST]"
 
-        input_text_prompt = user_start_token + user_text_prompt + user_end_token
         input_toks = self.tokenizer.apply_chat_template([{"role": "user", "content": user_text_prompt}]).input_ids
-        print(f"input_toks are {input_toks}")
-        print(f"translated back to string, this is {self.tokenizer.decode(input_toks)} ")
         input_ids_user = torch.tensor(input_toks)
 
         gen_str = self.tokenizer.decode(

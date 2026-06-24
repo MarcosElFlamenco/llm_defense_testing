@@ -18,11 +18,6 @@ from utils.references import DEVELOPER_DICT, TEST_PREFIXES
 
 SEED = 21
 
-START_TOKEN = "[INST]"
-END_TOKEN = "[/INST]"
-inst_start_index = 1
-inst_end_index = 29962
-
 
 def set_seed(seed=SEED):
     torch.manual_seed(seed)
