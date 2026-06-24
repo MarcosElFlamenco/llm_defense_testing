@@ -44,6 +44,7 @@ evaluate:
 autodan:
 	python AutoDAN/autodan_eval.py \
 		--attack_mode hga \
+		--attack_logfile "AutoDAN/results/autodan_hga/llama2_0_normal_debug.json" \
 		--max_new_tokens 128 \
 
 rebuilding:
