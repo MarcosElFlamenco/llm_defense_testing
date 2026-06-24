@@ -45,6 +45,7 @@ autodan:
 	python AutoDAN/autodan_eval.py \
 		--attack_mode hga \
 		--max_new_tokens 128 \
+		--save_suffix regular \
 
 rebuilding:
 	python rebuilding_inference.py \
