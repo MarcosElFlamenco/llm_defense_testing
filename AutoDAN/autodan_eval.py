@@ -60,6 +60,7 @@ def run_autodan_eval(args, attack_mode="ga"):
         use_cache=False,
         device=device,
     )
+    print(f"loaded model is {model}")
     conv_template = load_conversation_template(template_name)
     harmful_data = pd.read_csv(args.dataset_path)
     dataset = zip(harmful_data.goal[args.start:], harmful_data.target[args.start:])

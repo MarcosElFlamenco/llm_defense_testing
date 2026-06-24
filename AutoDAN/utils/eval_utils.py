@@ -16,7 +16,7 @@ from utils.opt_utils import (
 from utils.string_utils import load_conversation_template
 from utils.references import DEVELOPER_DICT, TEST_PREFIXES
 
-SEED = 20
+SEED = 21
 
 def set_seed(seed=SEED):
     torch.manual_seed(seed)
