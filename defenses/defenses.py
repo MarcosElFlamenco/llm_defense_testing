@@ -53,7 +53,7 @@ class NoDefense(Defense):
     @torch.no_grad()
     def __call__(self, text_prompt, suffix_manager, gen_config, batch_size=64):
 
-        end_of_user_text = string.find("[/INST]") - 1
+        end_of_user_text = text_prompt.find("[/INST]") - 1
         user_text_prompt = text_prompt[:end_of_user_text]
 
         toks_user = self.tokenizer(user_text_prompt).input_ids
