@@ -91,7 +91,7 @@ def main(args):
 
         print(f"######################## INPUT ########################: \n {prompt.user_text_prompt}")
 
-        output = defense(text_prompt = prompt.user_text_prompt,
+        output = defense(user_text_prompt = prompt.user_text_prompt,
                          gen_config=gen_config,
                          batch_size=64, 
                         )
@@ -108,7 +108,7 @@ def main(args):
             "goal": prompt.goal,
             "target": prompt.target,
             "adv_suffix": prompt.final_suffix,
-            "text_prompt": prompt.text_prompt,
+            "user_text_prompt": prompt.user_text_prompt,
             "output": output,
             "time": artifact_inference_time,
             "jailbroken": jailbroken
