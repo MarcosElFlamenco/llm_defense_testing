@@ -1,4 +1,6 @@
 
+import string
+
 import torch
 import numpy as np
 import gc
@@ -51,15 +53,16 @@ class NoDefense(Defense):
     @torch.no_grad()
     def __call__(self, text_prompt, suffix_manager, gen_config, batch_size=64):
 
-        input_ids = suffix_manager.get_input_ids_from_prompt(text_prompt=text_prompt).to(self.target_model.device)
-        assistant_role_slice = suffix_manager._assistant_role_slice
+        end_of_user_text = string.find("[/INST]") - 1
+        user_text_prompt = text_prompt[:end_of_user_text]
 
-        input_ids_assistant = input_ids[:assistant_role_slice.stop]
-        #input_ids_user_text = input_ids_assistant[1,-1]
+        toks_user = self.tokenizer(user_text_prompt).input_ids
+        input_ids_user = torch.tensor(toks_user)
+
         gen_str = self.tokenizer.decode(
             generate_from_user_text(
                 self.target_model,
-                input_ids_assistant,
+                input_ids_user,
                 gen_config=gen_config
             )
         ).strip()

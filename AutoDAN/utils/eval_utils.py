@@ -53,7 +53,6 @@ def generate_from_user_text(model, input_ids, gen_config=None):
         gen_config.max_new_tokens = 64
         gen_config.pad_token_id = tokenizer.pad_token_id
     input_ids = input_ids.to(model.device).unsqueeze(0)
-    print(f"input_ids are: {input_ids}, of length {input_ids.size(1)}")
     start_index = input_ids.size(1)
     attn_masks = torch.ones_like(input_ids).to(model.device)
     output_ids = model.generate(
