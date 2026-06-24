@@ -38,6 +38,7 @@ def build_arg_parser():
     parser.add_argument("--dataset_path", type=str, default="./data/advbench/harmful_behaviors.csv")
     parser.add_argument("--model", type=str, default="llama2")
     parser.add_argument("--save_suffix", type=str, default="normal")
+    parser.add_argument("--path", type=str, default="./AutoDAN/results/autodan_hga/llama2_0_normal.json")
     parser.add_argument("--API_key", type=str, default=None)
     return parser
 
@@ -74,20 +75,23 @@ def run_autodan_eval(args, attack_mode="ga"):
     gen_config = update_gen_config(model.generation_config, args)
     print(f'Attacks will be generated with the following generation config: {gen_config}')
 
-    with open("AutoDAN/results/autodan_hga/llama2_0_normal.json", "r") as f:
+    with open(args.path, "r") as f:
         jailbreaks = json.load(f)
 
-    for i in range(len(jailbreaks.keys()))
+    for key in sorted(jailbreaks.keys(), key=int):
         start_time = time.time()
         adv_suffix = ""
         gen_str = ""
         is_success = False
 
-        artifact = jailbreaks[str(i)]
+        artifact = jailbreaks[key]
+        goal = artifact["goal"]
+        target = artifact["target"]
 
         with torch.no_grad():
             adv_suffix = artifact["final_suffix"]
 
+            conv_template = load_conversation_template(template_name)
             suffix_manager = autodan_SuffixManager(
                 tokenizer=tokenizer,
                 conv_template=conv_template,
@@ -95,13 +99,14 @@ def run_autodan_eval(args, attack_mode="ga"):
                 target=target,
                 adv_string=adv_suffix,
             )
-            is_success, gen_str = check_for_attack_success( model,
+            is_success, gen_str = check_for_attack_success(
+                model,
                 tokenizer,
                 suffix_manager.get_input_ids(adv_string=adv_suffix).to(device),
                 suffix_manager._assistant_role_slice,
                 TEST_PREFIXES,
                 gen_config
-                )
+            )
             print(f"is success {is_success}")
             print(f"gen_str {gen_str}")
             gc.collect()
