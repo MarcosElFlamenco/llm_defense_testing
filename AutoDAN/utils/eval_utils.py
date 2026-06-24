@@ -46,7 +46,13 @@ def generate(model, tokenizer, input_ids, assistant_role_slice, gen_config=None)
         gen_config = model.generation_config
         gen_config.max_new_tokens = 64
         gen_config.pad_token_id = tokenizer.pad_token_id
+    print(f"GENERATE LOOP")
+    print(f"input_ids: {input_ids} of length {input_ids.shape}")
+    print(f"assistant_role_slice: {assistant_role_slice}")
+    
     input_ids = input_ids[:assistant_role_slice.stop].to(model.device).unsqueeze(0)
+
+    print(f"after truncation, input_ids: {input_ids} of length {input_ids.shape}")
     attn_masks = torch.ones_like(input_ids).to(model.device)
     output_ids = model.generate(
         input_ids,
