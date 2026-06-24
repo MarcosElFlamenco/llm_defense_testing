@@ -53,6 +53,7 @@ def generate(model, tokenizer, input_ids, assistant_role_slice, gen_config=None)
     input_ids = input_ids[:assistant_role_slice.stop].to(model.device).unsqueeze(0)
 
     print(f"after truncation, input_ids: {input_ids} of length {input_ids.shape}")
+    print(f"which, in string form, is: {tokenizer.decode(input_ids)}")
     attn_masks = torch.ones_like(input_ids).to(model.device)
     output_ids = model.generate(
         input_ids,
