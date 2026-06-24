@@ -89,10 +89,9 @@ def main(args):
     for i, prompt in enumerate(attack.prompts):
         print(f"Evaluating artifact {i}...")
 
-        print(f"######################## INPUT ########################: \n {prompt.text_prompt}")
+        print(f"######################## INPUT ########################: \n {prompt.user_text_prompt}")
 
-        output = defense(text_prompt = prompt.text_prompt,
-                         suffix_manager = prompt.suffix_manager, 
+        output = defense(text_prompt = prompt.user_text_prompt,
                          gen_config=gen_config,
                          batch_size=64, 
                         )

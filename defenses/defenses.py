@@ -51,14 +51,10 @@ class NoDefense(Defense):
         super(NoDefense, self).__init__(target_model,tokenizer, conv_template)
 
     @torch.no_grad()
-    def __call__(self, text_prompt, suffix_manager, gen_config, batch_size=64):
-
-        end_of_user_text = text_prompt.find("[/INST]") - 1
-        assert text_prompt.startswith("[INST]")
-        start_of_user_text = text_prompt.find("[INST]") + len("[INST]") + 1
-        user_text_prompt = text_prompt[start_of_user_text:end_of_user_text]
+    def __call__(self, user_text_prompt, gen_config, batch_size=64):
 
         print(f"User text prompt is: {user_text_prompt}")
+
         input_text_prompt = "[INST] " + user_text_prompt + " [/INST]"
         print(f"Input text prompt is: {input_text_prompt}")
         input_toks = self.tokenizer(input_text_prompt).input_ids

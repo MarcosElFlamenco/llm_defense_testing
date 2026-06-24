@@ -22,11 +22,11 @@ class Prompt:
         self.perturbable_prompt = perturbed_prompt
 
 class DANPrompt():
-    def __init__(self, goal, target, final_suffix, prompt, suffix_manager):
+    def __init__(self, goal, target, final_suffix, user_text_prompt, suffix_manager):
         self.goal = goal
         self.target = target
         self.final_suffix = final_suffix
-        self.text_prompt = prompt
+        self.user_text_prompt = user_text_prompt
         self.suffix_manager = suffix_manager
 
 class Attack:
@@ -67,7 +67,12 @@ class AutoDAN(Attack):
         )
         text_prompt = suffix_manager.get_prompt(adv_string=final_suffix)
 
-        return DANPrompt(goal, target, final_suffix, text_prompt, suffix_manager)
+        end_of_user_text = text_prompt.find("[/INST]") - 1
+        assert text_prompt.startswith("[INST]")
+        start_of_user_text = text_prompt.find("[INST]") + len("[INST]") + 1
+        user_text_prompt = text_prompt[start_of_user_text:end_of_user_text]
+
+        return DANPrompt(goal, target, final_suffix, user_text_prompt, suffix_manager)
 
 ### This would have been a nice implementation,
 ### but the smooth llm code words it differently
