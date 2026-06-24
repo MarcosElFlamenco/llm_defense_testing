@@ -51,6 +51,7 @@ rebuilding:
 	python rebuilding_inference.py \
 		--attack_mode hga \
 		--max_new_tokens 128 \
+		--path ./results/autodan_hga/llama2_0_normal.json
 		--debug
 
 generate_behavior_files:

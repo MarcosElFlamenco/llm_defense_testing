@@ -214,10 +214,16 @@ def run_autodan_eval(args, attack_mode="ga"):
         infos[i + args.start] = info
 
         os.makedirs(result_dir, exist_ok=True)
-        save_file_name = f"{result_dir}/{args.model}_{args.start}_{args.save_suffix}.json"
+        debug_suffix = ""
+        if args.debug:
+            debug_suffix = "_debug"
+        save_file_name = f"{result_dir}/{args.model}_{args.start}_{args.save_suffix}{debug_suffix}.json"
         with open(save_file_name, "w") as json_file:
             json.dump(infos, json_file, indent=4)
         print(f"saves info {info} to file {save_file_name}")
+        if args.debug:
+            print(f"stoping at first jailbreak as this is a debug script")
+            break
 
 
 if __name__ == "__main__":
