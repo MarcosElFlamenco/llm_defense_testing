@@ -91,8 +91,8 @@ def main(args):
 
         print(f"######################## INPUT ########################: \n {prompt.text_prompt}")
 
-        output = defense(input_ids = prompt.input_ids,
-                         assistant_role_slice=prompt.assistant_role_slice,
+        output = defense(text_prompt = prompt.text_prompt,
+                         suffix_manager = prompt.suffix_manager, 
                          gen_config=gen_config,
                          batch_size=64, 
                         )
@@ -119,7 +119,8 @@ def main(args):
          
         full_results_dir = f"{args.results_dir}/{args.attack}/{args.defense_type}"
         os.makedirs(full_results_dir, exist_ok=True)
-        with open(f"{full_results_dir}/{args.target_model}.json", "w") as json_file:
+        file_name = f"{args.target_model}_{args.save_suffix}.json"
+        with open(f"{full_results_dir}/{file_name}", "w") as json_file:
             json.dump(results, json_file, indent=4)
 
     print(f"Total inference time: {time.time() - start_time} seconds")
@@ -193,6 +194,7 @@ if __name__ == '__main__':
         action="store_true"
     )
 
+    parser.add_argument("--save_suffix", type=str, default="")
     parser.add_argument(
         '--smoothllm_pert_type',
         type=str,

@@ -22,13 +22,12 @@ class Prompt:
         self.perturbable_prompt = perturbed_prompt
 
 class DANPrompt():
-    def __init__(self, goal, target, final_suffix, prompt, input_ids, assistant_role_slice):
+    def __init__(self, goal, target, final_suffix, prompt, suffix_manager):
         self.goal = goal
         self.target = target
         self.final_suffix = final_suffix
         self.text_prompt = prompt
-        self.input_ids = input_ids
-        self.assistant_role_slice = assistant_role_slice
+        self.suffix_manager = suffix_manager
 
 class Attack:
     def __init__(self, logfile, target_model):
@@ -67,10 +66,8 @@ class AutoDAN(Attack):
             adv_string=final_suffix,
         )
         text_prompt = suffix_manager.get_prompt(adv_string=final_suffix)
-        input_ids = suffix_manager.get_input_ids_from_prompt(text_prompt=text_prompt).to(self.target_model.device)
-        assistant_role_slice = suffix_manager._assistant_role_slice
 
-        return DANPrompt(goal, target, final_suffix, text_prompt, input_ids, assistant_role_slice)
+        return DANPrompt(goal, target, final_suffix, text_prompt, suffix_manager)
 
 ### This would have been a nice implementation,
 ### but the smooth llm code words it differently
