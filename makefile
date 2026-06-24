@@ -44,11 +44,14 @@ evaluate:
 autodan:
 	python AutoDAN/autodan_eval.py \
 		--attack_mode hga \
-		--max_new_tokens 128
+		--max_new_tokens 128 \
+		--debug
+
 rebuilding:
 	python rebuilding_inference.py \
 		--attack_mode hga \
-		--max_new_tokens 128
+		--max_new_tokens 128 \
+		--debug
 
 generate_behavior_files:
 	python generate_behavior_files.py

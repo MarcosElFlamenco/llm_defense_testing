@@ -38,8 +38,27 @@ def build_arg_parser():
     parser.add_argument("--dataset_path", type=str, default="./data/advbench/harmful_behaviors.csv")
     parser.add_argument("--model", type=str, default="llama2")
     parser.add_argument("--save_suffix", type=str, default="normal")
+    parser.add_argument("--debug", action="store_true")
     parser.add_argument("--API_key", type=str, default=None)
     return parser
+
+
+def build_debug_snapshot(*, template_name, goal, target, adv_suffix, text_prompt, input_ids, assistant_role_slice, gen_config, gen_str, is_success, step_index):
+    return {
+        "template_name": template_name,
+        "goal": goal,
+        "target": target,
+        "final_suffix": adv_suffix,
+        "text_prompt": text_prompt,
+        "text_prompt_length": len(text_prompt),
+        "input_ids": input_ids.detach().cpu().tolist(),
+        "input_ids_length": int(input_ids.numel()),
+        "assistant_role_slice": [assistant_role_slice.start, assistant_role_slice.stop],
+        "gen_config": gen_config.to_dict() if hasattr(gen_config, "to_dict") else str(gen_config),
+        "gen_str": gen_str,
+        "is_success": is_success,
+        "step_index": step_index,
+    }
 
 def run_autodan_eval(args, attack_mode="ga"):
     if attack_mode not in {"ga", "hga"}:
@@ -60,7 +79,6 @@ def run_autodan_eval(args, attack_mode="ga"):
         use_cache=False,
         device=device,
     )
-    print(f"loaded model is {model}")
     conv_template = load_conversation_template(template_name)
     harmful_data = pd.read_csv(args.dataset_path)
     dataset = zip(harmful_data.goal[args.start:], harmful_data.target[args.start:])
@@ -86,6 +104,8 @@ def run_autodan_eval(args, attack_mode="ga"):
             "is_success": False,
             "log": log,
         }
+        if args.debug:
+            info["debug"] = []
 
         start_time = time.time()
         new_adv_suffixs = reference[:batch_size]
@@ -113,20 +133,39 @@ def run_autodan_eval(args, attack_mode="ga"):
                 current_loss = losses[best_new_adv_suffix_id]
 
                 adv_suffix = best_new_adv_suffix
+                suffix_conv_template = load_conversation_template(template_name)
                 suffix_manager = autodan_SuffixManager(
                     tokenizer=tokenizer,
-                    conv_template=conv_template,
+                    conv_template=suffix_conv_template,
                     instruction=goal,
                     target=target,
                     adv_string=adv_suffix,
                 )
+                text_prompt = suffix_manager.get_prompt(adv_string=adv_suffix)
+                input_ids = suffix_manager.get_input_ids_from_prompt(text_prompt=text_prompt).to(device)
                 is_success, gen_str = check_for_attack_success( model,
                     tokenizer,
-                    suffix_manager.get_input_ids(adv_string=adv_suffix).to(device),
+                    input_ids,
                     suffix_manager._assistant_role_slice,
                     TEST_PREFIXES,
                     gen_config
                 )
+                if args.debug:
+                    info["debug"].append(
+                        build_debug_snapshot(
+                            template_name=template_name,
+                            goal=goal,
+                            target=target,
+                            adv_suffix=adv_suffix,
+                            text_prompt=text_prompt,
+                            input_ids=input_ids,
+                            assistant_role_slice=suffix_manager._assistant_role_slice,
+                            gen_config=gen_config,
+                            gen_str=gen_str,
+                            is_success=is_success,
+                            step_index=step_index,
+                        )
+                    )
 
                 new_adv_suffixs, word_dict = _sample_next_suffixes(
                     attack_mode=attack_mode,
