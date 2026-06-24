@@ -120,7 +120,7 @@ def main(args):
         full_results_dir = f"{args.results_dir}/{args.attack}/{args.defense_type}"
         os.makedirs(full_results_dir, exist_ok=True)
         file_name = f"{args.target_model}_{args.save_suffix}.json"
-        if not args.dontsave:
+        if not args.nosave:
             with open(f"{full_results_dir}/{file_name}", "w") as json_file:
                 json.dump(results, json_file, indent=4)
 
@@ -195,7 +195,7 @@ if __name__ == '__main__':
         action="store_true"
     )
     parser.add_argument(
-        '--dontsave',
+        '--nosave',
         action="store_true"
     )
     parser.add_argument("--save_suffix", type=str, default="")

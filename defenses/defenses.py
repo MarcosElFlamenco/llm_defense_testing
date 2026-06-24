@@ -59,7 +59,7 @@ class NoDefense(Defense):
         gen_str = self.tokenizer.decode(
             generate_from_user_text(
                 self.target_model,
-                input_ids_user_text,
+                input_ids_assistant,
                 gen_config=gen_config
             )
         ).strip()

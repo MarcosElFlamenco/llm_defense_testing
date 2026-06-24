@@ -40,7 +40,7 @@ evaluate:
 		--attack_logfile "AutoDAN/results/autodan_hga/llama2_0_regular.json" \
 		--max_new_tokens 512 \
 		--save_suffix textprompt \
-		--dontsave
+		--nosave
 
 
 autodan:
