@@ -85,7 +85,7 @@ def run_autodan_eval(args, attack_mode="ga"):
     infos = {}
     crit = nn.CrossEntropyLoss(reduction="mean")
     reference_template = torch.load("assets/prompt_group.pth", map_location="cpu")
-    result_dir = "./results/autodan_ga" if attack_mode == "ga" else "./results/autodan_hga"
+    result_dir = f"AutoDAN/results/autodan_{attack_mode}"
     hga_interval = getattr(args, "iter", None)
 
 
@@ -220,7 +220,7 @@ def run_autodan_eval(args, attack_mode="ga"):
         save_file_name = f"{result_dir}/{args.model}_{args.start}_{args.save_suffix}{debug_suffix}.json"
         with open(save_file_name, "w") as json_file:
             json.dump(infos, json_file, indent=4)
-        print(f"saves info {info} to file {save_file_name}")
+        print(f"Saved info to file {save_file_name}")
         if args.debug:
             print(f"stoping at first jailbreak as this is a debug script")
             break
