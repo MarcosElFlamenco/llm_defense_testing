@@ -238,11 +238,6 @@ if __name__ == '__main__':
         default=64
     )
     parser.add_argument(
-        "--inference_batch_size", 
-        type=int, 
-        default=8
-    )
-    parser.add_argument(
         "--inference_batch_size",
         type=int,
         default=8,
