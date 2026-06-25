@@ -85,23 +85,20 @@ class Defense:
                 )
             except RuntimeError:
                 # Fall back to single-sample loop on OOM
+                print(f"Warning: OOM encountered for batch {i}..{i+len(batch_texts)-1}. Falling back to single-sample inference.")
                 for t in batch_texts:
                     all_outputs.append(self.forward_autodan(t, gen_config))
                 torch.cuda.empty_cache()
                 continue
 
             # Decode and strip the prompt prefix from generated text
-            decoded = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
+            # Use token boundaries for the prompt/generation split so batching
+            # does not introduce character-level slicing drift.
+            gen_start_idx = batch_input_ids.size(1)
 
-            # compute char index where generation starts for each item
-            gen_start_idx = [
-                len(self.tokenizer.decode(batch_input_ids[j], skip_special_tokens=True))
-                for j in range(batch_input_ids.size(0))
-            ]
-
-            for j, full in enumerate(decoded):
-                start = gen_start_idx[j]
-                gen_str = full[start:].strip()
+            for j in range(outputs.size(0)):
+                generated_tokens = outputs[j, gen_start_idx:]
+                gen_str = self.tokenizer.decode(generated_tokens, skip_special_tokens=True).strip()
                 all_outputs.append(gen_str)
 
             gc.collect()

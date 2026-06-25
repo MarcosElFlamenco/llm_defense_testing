@@ -237,12 +237,6 @@ if __name__ == '__main__':
         type=int, 
         default=64
     )
-    parser.add_argument(
-        "--inference_batch_size",
-        type=int,
-        default=8,
-        help="Number of prompts to run per generate call (batched inference)."
-    )
 
 
     args = parser.parse_args()

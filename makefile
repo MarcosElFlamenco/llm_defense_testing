@@ -39,12 +39,9 @@ evaluate:
 		--attack $(ATTACK) \
 		--attack_logfile "AutoDAN/results/autodan_hga/llama2_0_regular.json" \
 		--max_new_tokens 130 \
-		--save_suffix batch \
+		--save_suffix betterbatch \
 		--inference_batch_size 2	
 		
-
-
-
 autodan:
 	python AutoDAN/autodan_eval.py \
 		--attack_mode hga \

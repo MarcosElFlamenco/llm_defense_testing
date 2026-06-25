@@ -76,17 +76,12 @@ class LLM:
         except RuntimeError:
             return []
 
-        # Decode the outputs produced by the LLM
-        batch_outputs = self.tokenizer.batch_decode(
-            outputs, 
-            skip_special_tokens=True
-        )
-        gen_start_idx = [
-            len(self.tokenizer.decode(batch_input_ids[i], skip_special_tokens=True)) 
-            for i in range(len(batch_input_ids))
-        ]
+        # Trim the prompt in token space so batch padding does not shift the
+        # generation boundary the way character slicing can.
+        gen_start_idx = batch_input_ids.shape[1]
         batch_outputs = [
-            output[gen_start_idx[i]:] for i, output in enumerate(batch_outputs)
+            self.tokenizer.decode(output[gen_start_idx:], skip_special_tokens=True)
+            for output in outputs
         ]
 
         return batch_outputs
