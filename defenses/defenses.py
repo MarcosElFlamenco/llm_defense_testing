@@ -70,6 +70,7 @@ class Defense:
             batch_inputs = self.tokenizer(
                 batch_texts,
                 padding=True,
+                padding_side='left',
                 truncation=False,
                 return_tensors='pt'
             )
