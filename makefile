@@ -39,7 +39,7 @@ evaluate:
 		--attack $(ATTACK) \
 		--attack_logfile "AutoDAN/results/autodan_hga/llama2_0_regular.json" \
 		--max_new_tokens 512 \
-		--save_suffix safepoint \
+		--save_suffix fschat \
 
 
 
