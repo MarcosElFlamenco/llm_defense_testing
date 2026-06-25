@@ -37,7 +37,7 @@ ATTACK = AUTODAN
 evaluate:
 	python evaluate_defenses.py \
 		--attack $(ATTACK) \
-		--attack_logfile "AutoDAN/results/autodan_hga/llama2_0_raphtest.json" \
+		--attack_logfile "AutoDAN/results/autodan_hga/llama2_0_raftest.json" \
 		--max_new_tokens 512 \
 		--save_suffix betterbatch \
 		--inference_batch_size 2	
@@ -46,7 +46,7 @@ autodan:
 	python AutoDAN/autodan_eval.py \
 		--attack_mode hga \
 		--max_new_tokens 128 \
-		--save_suffix raphtest \
+		--save_suffix raftry \
 
 rebuilding:
 	python rebuilding_inference.py \
