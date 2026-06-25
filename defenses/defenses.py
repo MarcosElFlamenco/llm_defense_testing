@@ -57,6 +57,11 @@ class NoDefense(Defense):
         input_toks = self.tokenizer(input_text_prompt).input_ids
         input_ids_user = torch.tensor(input_toks)
 
+<<<<<<< HEAD
+=======
+        input_ids_assistant = input_ids[:assistant_role_slice.stop]
+        input_ids_user_text = input_ids_assistant[1:-1]
+>>>>>>> 7fd20c0dd0e2ae1c70154f1c1f2a1ff548a19947
         gen_str = self.tokenizer.decode(
             generate_from_user_text(
                 self.target_model,

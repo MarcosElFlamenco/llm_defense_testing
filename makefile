@@ -39,9 +39,14 @@ evaluate:
 		--attack $(ATTACK) \
 		--attack_logfile "AutoDAN/results/autodan_hga/llama2_0_regular.json" \
 		--max_new_tokens 512 \
+<<<<<<< HEAD
 		--save_suffix safepoint \
 
 
+=======
+		--save_suffix textprompt
+		--nosave
+>>>>>>> 7fd20c0dd0e2ae1c70154f1c1f2a1ff548a19947
 
 autodan:
 	python AutoDAN/autodan_eval.py \
