@@ -116,7 +116,7 @@ def main(args):
         user_texts = [p.user_text_prompt for p in batch_prompts]
 
         batch_start_time = time.time()
-        outputs = defense.forward_autodan_batch(user_texts, gen_config, batch_size=batch_size)
+        outputs = defense(user_texts, gen_config, batch_size=batch_size)
         batch_time = time.time() - batch_start_time
 
         # assign outputs back to individual artifacts
