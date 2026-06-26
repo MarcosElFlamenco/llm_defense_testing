@@ -26,7 +26,7 @@ smooth_llm_evaluate:
 		--save_suffix smoothllm \
 		--inference_batch_size 1 \
 		--smoothllm_batch_size 2 \
-		--defense_type SmoothLLM \
+		--defense SmoothLLM \
 		--smoothllm_pert_type RandomSwapPerturbation \
 		--smoothllm_pert_pct 10 \
 		--smoothllm_num_copies 2		

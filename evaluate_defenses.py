@@ -43,7 +43,7 @@ def main(args):
     results_path = build_results_path(
         results_dir=args.results_dir,
         attack=args.attack,
-        defense_type=args.defense_type,
+        defense_type=args.defense,
         target_model=args.target_model,
         save_suffix=args.save_suffix,
     )
