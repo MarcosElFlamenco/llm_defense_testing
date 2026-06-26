@@ -134,7 +134,6 @@ def main(args):
             result = {
                 "goal": prompt.goal,
                 "target": prompt.target,
-                "adv_suffix": prompt.final_suffix,
                 "user_text_prompt": prompt.user_text_prompt,
                 "output": output,
                 "time": per_item_time,
