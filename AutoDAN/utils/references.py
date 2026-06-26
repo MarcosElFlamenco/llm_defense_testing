@@ -7,6 +7,7 @@ MODEL_PATH_DICTS = {
     "mpt-chat": "./models/mpt/mpt-7b-chat",
     "mpt-instruct": "./models/mpt/mpt-7b-instruct",
     "falcon": "./models/falcon/falcon-7b-instruct",
+    "gemma-7b": "~/.cache/huggingface/hub/models--google--gemma-7b/snapshots/ff6768d9368919a1f025a54f9f5aa0ee591730bb"
 }
 
 DEVELOPER_DICT = {

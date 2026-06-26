@@ -18,10 +18,10 @@ from attacks.factory import get_attack
 import numpy as np
 import torch.nn as nn
 
-from utils.opt_utils import load_model_and_tokenizer
-from utils.string_utils import load_conversation_template
-from utils.eval_utils import check_for_attack_success, set_seed, update_gen_config
-from utils.references import MODEL_PATH_DICTS
+from AutoDAN.utils.opt_utils import load_model_and_tokenizer
+from AutoDAN.utils.string_utils import load_conversation_template
+from AutoDAN.utils.eval_utils import check_for_attack_success, set_seed, update_gen_config
+from AutoDAN.utils.references import MODEL_PATH_DICTS
 from jailbreak_evaluators import SyntaxicEvaluator
 from experiment_utils import (
     build_pending_prompts,
