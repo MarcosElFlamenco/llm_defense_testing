@@ -15,3 +15,5 @@ AutoDAN/__init__.py
 sandbox.ipynb
 logger.log
 notepad.txt
+AutoDAN/results/autodan_hga/llama2_0_nightrun.json
+
