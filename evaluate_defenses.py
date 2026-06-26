@@ -87,34 +87,41 @@ def main(args):
     gen_config = update_gen_config(target_model.generation_config, args)
 
     for i, prompt in enumerate(attack.prompts):
-        print(f"Evaluating artifact {i}...")
+        pass
+    # Process prompts in batches for batched inference
+    batch_size = args.inference_batch_size
+    for start in range(0, len(attack.prompts), batch_size):
+        batch_prompts = attack.prompts[start:start+batch_size]
+        print(f"Evaluating artifacts {start}..{start+len(batch_prompts)-1}...")
+        user_texts = [p.user_text_prompt for p in batch_prompts]
 
-        print(f"######################## INPUT ########################: \n {prompt.user_text_prompt}")
+        batch_start_time = time.time()
+        outputs = defense.forward_autodan_batch(user_texts, gen_config, batch_size=batch_size)
+        batch_time = time.time() - batch_start_time
 
-        output = defense(user_text_prompt = prompt.user_text_prompt,
-                         gen_config=gen_config,
-                         batch_size=64, 
-                        )
-        
-        jailbroken = jailbreak_evaluator(output)
-        if jailbroken:
-            num_jailbroken += 1
-        artifact_inference_time = time.time() - artifact_start_time
-        artifact_start_time = time.time()
-        
-        print(f"######################## OUTPUT ########################: \n {output} \n\n  ######################## JAILBROKEN: {jailbroken} \n INFERENCE TIME: {artifact_inference_time}s")
+        # assign outputs back to individual artifacts
+        per_item_time = batch_time / max(1, len(batch_prompts))
+        for j, output in enumerate(outputs):
+            i = start + j
+            prompt = batch_prompts[j]
+            jailbroken = jailbreak_evaluator(output)
+            if jailbroken:
+                num_jailbroken += 1
 
-        result = {
-            "goal": prompt.goal,
-            "target": prompt.target,
-            "adv_suffix": prompt.final_suffix,
-            "user_text_prompt": prompt.user_text_prompt,
-            "output": output,
-            "time": artifact_inference_time,
-            "jailbroken": jailbroken
-        }
+            print(f"######################## INPUT ########################: \n {prompt.user_text_prompt}")
+            print(f"######################## OUTPUT ########################: \n {output} \n\n  ######################## JAILBROKEN: {jailbroken} \n INFERENCE TIME: {per_item_time}s")
 
-        results[str(i)] = result
+            result = {
+                "goal": prompt.goal,
+                "target": prompt.target,
+                "adv_suffix": prompt.final_suffix,
+                "user_text_prompt": prompt.user_text_prompt,
+                "output": output,
+                "time": per_item_time,
+                "jailbroken": jailbroken
+            }
+
+            results[str(i)] = result
          
         full_results_dir = f"{args.results_dir}/{args.attack}/{args.defense_type}"
         os.makedirs(full_results_dir, exist_ok=True)
@@ -234,6 +241,12 @@ if __name__ == '__main__':
         "--max_new_tokens", 
         type=int, 
         default=64
+    )
+    parser.add_argument(
+        "--inference_batch_size",
+        type=int,
+        default=8,
+        help="Number of prompts to run per generate call (batched inference)."
     )
 
 
