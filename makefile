@@ -24,11 +24,12 @@ smooth_llm_evaluate:
 		--attack_logfile "AutoDAN/results/autodan_hga/llama2_0_regular.json" \
 		--max_new_tokens 512 \
 		--save_suffix smoothllm \
-		--inference_batch_size 4 \
+		--inference_batch_size 1 \
+		--smoothllm_batch_size 2 \
 		--defense_type SmoothLLM \
 		--smoothllm_pert_type RandomSwapPerturbation \
 		--smoothllm_pert_pct 10 \
-		--smoothllm_num_copies 3		
+		--smoothllm_num_copies 2		
 autodan:
 	python AutoDAN/autodan_eval.py \
 		--attack_mode hga \
