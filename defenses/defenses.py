@@ -179,7 +179,6 @@ class SmoothLLM(Defense):
             text_prompt_copy = copy.deepcopy(input)
             #prompt_copy.perturb(self.perturbation_fn)
             text_prompt_copy = self.perturbation_fn(text_prompt_copy)
-            print(f'Perturbed prompt {i}: {text_prompt_copy}')
             all_inputs.append(text_prompt_copy)
 
         # Iterate each batch of inputs
