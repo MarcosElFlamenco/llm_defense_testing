@@ -37,9 +37,9 @@ ATTACK = AUTODAN
 evaluate:
 	python evaluate_defenses.py \
 		--attack $(ATTACK) \
-		--attack_logfile "AutoDAN/results/autodan_hga/llama2_0_raftest.json" \
+		--attack_logfile "AutoDAN/results/autodan_hga/llama2_0_regular.json" \
 		--max_new_tokens 512 \
-		--save_suffix betterbatch \
+		--save_suffix cleanerbatch \
 		--inference_batch_size 2	
 		
 autodan:
