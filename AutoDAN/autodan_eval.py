@@ -11,6 +11,7 @@ from tqdm import tqdm
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "AutoDAN"))
 
 from utils.eval_utils import _sample_next_suffixes, _prepare_reference, log_init, set_seed, check_for_attack_success, update_gen_config
+from utils.exp_utils import build_pending_prompts, load_results_file, save_results_file
 from utils.references import TEST_PREFIXES, MODEL_PATH_DICTS
 from utils.opt_utils import (
     get_score_autodan,
@@ -81,8 +82,6 @@ def run_autodan_eval(args, attack_mode="ga"):
     )
     conv_template = load_conversation_template(template_name)
     harmful_data = pd.read_csv(args.dataset_path)
-    dataset = zip(harmful_data.goal[args.start:], harmful_data.target[args.start:])
-    infos = {}
     crit = nn.CrossEntropyLoss(reduction="mean")
     reference_template = torch.load("assets/prompt_group.pth", map_location="cpu")
     result_dir = f"AutoDAN/results/autodan_{attack_mode}"
@@ -92,7 +91,18 @@ def run_autodan_eval(args, attack_mode="ga"):
     gen_config = update_gen_config(model.generation_config, args)
     print(f'Attacks will be generated with the following generation config: {gen_config}')
 
-    for i, (goal, target) in tqdm(enumerate(dataset), total=len(harmful_data.goal[args.start:])):
+    debug_suffix = "_debug" if args.debug else ""
+    save_file_name = f"{result_dir}/{args.model}_{args.start}_{args.save_suffix}{debug_suffix}.json"
+    existing_infos = load_results_file(save_file_name)
+
+    indexed_dataset = [
+        (i + args.start, goal, target)
+        for i, (goal, target) in enumerate(zip(harmful_data.goal[args.start:], harmful_data.target[args.start:]))
+    ]
+    pending_dataset = build_pending_prompts(indexed_dataset, existing_infos)
+    infos = dict(existing_infos)
+
+    for i, goal, target in tqdm(pending_dataset, total=len(pending_dataset)):
         reference = _prepare_reference(reference_template, template_name)
         log = log_init()
         info = {
@@ -211,15 +221,10 @@ def run_autodan_eval(args, attack_mode="ga"):
         info["final_suffix"] = adv_suffix
         info["final_respond"] = gen_str
         info["is_success"] = is_success
-        infos[i + args.start] = info
+        infos[i] = info
 
         os.makedirs(result_dir, exist_ok=True)
-        debug_suffix = ""
-        if args.debug:
-            debug_suffix = "_debug"
-        save_file_name = f"{result_dir}/{args.model}_{args.start}_{args.save_suffix}{debug_suffix}.json"
-        with open(save_file_name, "w") as json_file:
-            json.dump(infos, json_file, indent=4)
+        save_results_file(save_file_name, infos)
         print(f"Saved info to file {save_file_name}")
         if args.debug:
             print(f"stoping at first jailbreak as this is a debug script")
