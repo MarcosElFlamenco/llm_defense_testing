@@ -11,23 +11,12 @@ class Prompt:
     def __init__(self, full_prompt, perturbable_prompt, max_new_tokens):
         self.full_prompt = full_prompt
         self.perturbable_prompt = perturbable_prompt
-        self.max_new_tokens = max_new_tokens
 
-    def perturb(self, perturbation_fn):
-        perturbed_prompt = perturbation_fn(self.perturbable_prompt)
-        self.full_prompt = self.full_prompt.replace(
-            self.perturbable_prompt,
-            perturbed_prompt
-        )
-        self.perturbable_prompt = perturbed_prompt
-
-class DANPrompt():
+class DANPrompt(Prompt):
     def __init__(self, goal, target, final_suffix, user_text_prompt, suffix_manager):
         self.goal = goal
         self.target = target
-        self.final_suffix = final_suffix
         self.user_text_prompt = user_text_prompt
-        self.suffix_manager = suffix_manager
 
 class Attack:
     def __init__(self, logfile, target_model):

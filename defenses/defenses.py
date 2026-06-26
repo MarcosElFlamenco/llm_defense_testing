@@ -105,7 +105,7 @@ class NoDefense(Defense):
     @torch.no_grad()
     def __call__(self, input, gen_config, batch_size=64):
         ## Single string inference
-        if not isinstance(input, str):
+        if isinstance(input, str):
             self.forward_autodan(input, gen_config)
         else:
             ### Batched inference
@@ -159,15 +159,15 @@ class SmoothLLM(Defense):
             prefix in s for prefix in self.SMOOTH_LLM_TEST_PREFIXES
         ])
 
-
     @torch.no_grad()
     def __call__(self, prompt, batch_size=64, max_new_len=100):
 
         all_inputs = []
         for _ in range(self.num_copies):
             prompt_copy = copy.deepcopy(prompt)
-            prompt_copy.perturb(self.perturbation_fn)
-            all_inputs.append(prompt_copy.full_prompt)
+            #prompt_copy.perturb(self.perturbation_fn)
+            prompt_copy.user_text_prompt = self.perturbation_fn(prompt_copy.user_text_prompt)
+            all_inputs.append(prompt_copy.user_text_prompt)
 
         # Iterate each batch of inputs
         all_outputs = []
