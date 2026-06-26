@@ -1,6 +1,5 @@
 
-MODEL_NAME = meta-llama/Llama-2-7b-chat-hf
-
+MODEL_NAME = google/gemma-7b
 
 download_model:
 	hf download $(MODEL_NAME)
