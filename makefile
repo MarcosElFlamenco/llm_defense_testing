@@ -21,15 +21,16 @@ evaluate:
 smooth_llm_evaluate:
 	python evaluate_defenses.py \
 		--attack $(ATTACK) \
-		--attack_logfile "AutoDAN/results/autodan_hga/llama2_0_regular.json" \
+		--defense SmoothLLM \
+		--attack_logfile "AutoDAN/results/autodan_hga/llama2_0_normal_debug.json" \
 		--max_new_tokens 512 \
 		--save_suffix smoothllm \
-		--inference_batch_size 1 \
-		--smoothllm_batch_size 2 \
+		--inference_batch_size 4 \
 		--defense SmoothLLM \
 		--smoothllm_pert_type RandomSwapPerturbation \
 		--smoothllm_pert_pct 10 \
-		--smoothllm_num_copies 2		
+		--smoothllm_num_copies 3		
+
 autodan:
 	python AutoDAN/autodan_eval.py \
 		--attack_mode hga \
