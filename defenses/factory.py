@@ -1,8 +1,6 @@
 # defense_factory.py
 from defenses.defenses import NoDefense, SmoothLLM
 
-
-
 def get_defense(defense_type: str, target_model, tokenizer, conv_template, args=None):
     cls = defense_type.lower()
     if cls == "nodefense":

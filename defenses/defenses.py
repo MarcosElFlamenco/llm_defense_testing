@@ -175,10 +175,11 @@ class SmoothLLM(Defense):
     @torch.no_grad()
     def smooth_llm_single_input(self, input, gen_config, batch_size=64):
         all_inputs = []
-        for _ in range(self.num_copies):
+        for i in range(self.num_copies):
             text_prompt_copy = copy.deepcopy(input)
             #prompt_copy.perturb(self.perturbation_fn)
             text_prompt_copy = self.perturbation_fn(text_prompt_copy)
+            print(f'Perturbed prompt {i}: {text_prompt_copy}')
             all_inputs.append(text_prompt_copy)
 
         # Iterate each batch of inputs
@@ -214,6 +215,7 @@ class SmoothLLM(Defense):
 
         # Determine whether SmoothLLM was jailbroken
         refusal_percentage = np.mean(refusals)
+        print(f"Refusal percentage: {refusal_percentage:.2f}")
         overall_refusal = True if refusal_percentage > 0.5 else False
 
         # Pick a response that is consistent with the majority vote

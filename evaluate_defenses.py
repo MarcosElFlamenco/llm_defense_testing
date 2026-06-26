@@ -36,7 +36,6 @@ def get_attack_data(attack_data_path):
         artifact_dataset = json.load(f)
     return artifact_dataset
 
-
 def main(args):
     start_time = time.time()
 
@@ -157,112 +156,33 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--results_dir',type=str,default='./defense_testing_results')
-    parser.add_argument(
-        '--trial',
-        type=int,
-        default=0
-    )
+    parser.add_argument( '--trial', type=int, default=0)
 
     # Targeted LLM
-    parser.add_argument(
-        '--target_model',
-        type=str,
-        default='llama2',
-        choices=['vicuna', 'llama2']
-    )
+    parser.add_argument( '--target_model', type=str, default='llama2', choices=['vicuna', 'llama2'])
 
-    # Attacking LLM
-    parser.add_argument(
-        '--attack',
-        type=str,
-        default='AUTODAN',
-        choices=['AUTODAN', 'PAIR', 'GCG']
-    )
-    parser.add_argument(
-        '--attack_logfile',
-        type=str,
-        default='data/GCG/vicuna_behaviors.json'
-    )
+    # Experimental setup
+    parser.add_argument( '--attack_logfile', type=str, default='data/GCG/vicuna_behaviors.json')
+    parser.add_argument( '--attack', type=str, default='AUTODAN', choices=['AUTODAN', 'PAIR', 'GCG'])
+    parser.add_argument( '--defense', type=str, default='NoDefense', choices=[ 'NoDefense', 'SmoothLLM' ])
 
-    parser.add_argument(
-        "--num_artifacts_to_eval",
-        type=int,
-        default=100000
-    )
+    # SmoothLLM arguments
+    parser.add_argument( "--smoothllm_batch_size", type=int, default=8, help="Number of prompts to run per generate call (batched inference).")
+    parser.add_argument( '--smoothllm_num_copies', type=int, default=10,)
+    parser.add_argument( '--smoothllm_pert_type', type=str, default='RandomSwapPerturbation', choices=[ 'RandomSwapPerturbation', 'RandomPatchPerturbation', 'RandomInsertPerturbation' ])
+    parser.add_argument( '--smoothllm_pert_pct', type=int, default=10)
 
-    # SmoothLLM
-    parser.add_argument(
-        '--smoothllm_num_copies',
-        type=int,
-        default=10,
-    )
-    parser.add_argument(
-        '--smoothllm_pert_pct',
-        type=int,
-        default=10
-    )
-    parser.add_argument(
-        '--verbose',
-        action="store_true"
-    )
-    parser.add_argument(
-        '--do_sample',
-        action="store_true"
-    )
+    # LLM technicals
+    parser.add_argument( '--do_sample', action="store_true")
+    parser.add_argument( '--quantize', action="store_true")
+    parser.add_argument( "--max_new_tokens", type=int, default=64)
+    parser.add_argument( "--inference_batch_size", type=int, default=8, help="Number of prompts to run per generate call (batched inference).")
+    parser.add_argument( "--device", type=int, default=0)
 
-    parser.add_argument(
-        '--quantize',
-        action="store_true"
-    )
-    parser.add_argument(
-        '--nosave',
-        action="store_true"
-    )
+    # XP context
+    parser.add_argument( '--verbose', action="store_true")
+    parser.add_argument( '--nosave', action="store_true")
     parser.add_argument("--save_suffix", type=str, default="")
-    parser.add_argument(
-        '--smoothllm_pert_type',
-        type=str,
-        default='RandomSwapPerturbation',
-        choices=[
-            'RandomSwapPerturbation',
-            'RandomPatchPerturbation',
-            'RandomInsertPerturbation'
-        ]
-    )
-
-    parser.add_argument(
-        '--defense',
-        type=str,
-        default='NoDefense',
-        choices=[
-            'NoDefense',
-            'SmoothLLM'
-        ]
-    )
-
-    parser.add_argument(
-        "--device", 
-        type=int, 
-        default=0
-    )
-
-    parser.add_argument(
-        "--max_new_tokens", 
-        type=int, 
-        default=64
-    )
-    parser.add_argument(
-        "--inference_batch_size",
-        type=int,
-        default=8,
-        help="Number of prompts to run per generate call (batched inference)."
-    )
-    parser.add_argument(
-        "--smoothllm_batch_size",
-        type=int,
-        default=8,
-        help="Number of prompts to run per generate call (batched inference)."
-    )
 
     args = parser.parse_args()
     main(args)
