@@ -40,6 +40,7 @@ def build_arg_parser():
     parser.add_argument("--model", type=str, default="llama2")
     parser.add_argument("--save_suffix", type=str, default="normal")
     parser.add_argument("--debug", action="store_true")
+    parser.add_argument("--continue_after_jailbroken", action="store_true")
     parser.add_argument("--API_key", type=str, default=None)
     return parser
 
@@ -212,7 +213,7 @@ def run_autodan_eval(args, attack_mode="ga"):
                 info["log"]["respond"].append(gen_str)
                 info["log"]["success"].append(is_success)
 
-                if is_success:
+                if is_success and not args.continue_after_jailbroken:
                     break
                 gc.collect()
                 torch.cuda.empty_cache()
