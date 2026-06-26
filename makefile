@@ -54,6 +54,15 @@ nightrun:
 		--max_new_tokens 128 \
 		--save_suffix nightrun \
 
+megadan:
+	python AutoDAN/autodan_eval.py \
+		--attack_mode hga \
+		--max_new_tokens 128 \
+		--save_suffix megadan \
+		--continue_after_jailbroken \
+		--dataset_path ./data/advbench/smaller_behaviors.csv
+
+
 
 rebuilding:
 	python rebuilding_inference.py \
