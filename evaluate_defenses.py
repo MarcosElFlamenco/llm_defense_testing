@@ -23,6 +23,13 @@ from utils.string_utils import load_conversation_template
 from utils.eval_utils import check_for_attack_success, set_seed, update_gen_config
 from utils.references import MODEL_PATH_DICTS
 from jailbreak_evaluators import SyntaxicEvaluator
+from experiment_utils import (
+    build_pending_prompts,
+    build_results_path,
+    get_processed_prompts,
+    load_results_file,
+    save_results_file,
+)
 
 def get_attack_data(attack_data_path):
     with open(attack_data_path, "r") as f:
@@ -33,9 +40,15 @@ def get_attack_data(attack_data_path):
 def main(args):
     start_time = time.time()
 
-    # Preparing output dictionary
-    os.makedirs(args.results_dir, exist_ok=True)
-    results = {}
+    results_path = build_results_path(
+        results_dir=args.results_dir,
+        attack=args.attack,
+        defense_type=args.defense_type,
+        target_model=args.target_model,
+        save_suffix=args.save_suffix,
+    )
+    results = load_results_file(results_path)
+    processed_prompts = get_processed_prompts(results)
 
     # Setup compute
     set_seed()
@@ -86,13 +99,20 @@ def main(args):
     # Setup the generation config
     gen_config = update_gen_config(target_model.generation_config, args)
 
-    for i, prompt in enumerate(attack.prompts):
-        pass
+    pending_prompts = build_pending_prompts(attack.prompts, processed_prompts)
+    num_jailbroken = sum(1 for result in results.values() if result.get("jailbroken"))
+
     # Process prompts in batches for batched inference
     batch_size = args.inference_batch_size
-    for start in range(0, len(attack.prompts), batch_size):
-        batch_prompts = attack.prompts[start:start+batch_size]
-        print(f"Evaluating artifacts {start}..{start+len(batch_prompts)-1}...")
+    for start in range(0, len(pending_prompts), batch_size):
+        batch_items = pending_prompts[start:start + batch_size]
+        batch_indices = [item_index for item_index, _ in batch_items]
+        batch_prompts = [item_prompt for _, item_prompt in batch_items]
+
+        if not batch_prompts:
+            continue
+
+        print(f"Evaluating artifacts {batch_indices[0]}..{batch_indices[-1]}...")
         user_texts = [p.user_text_prompt for p in batch_prompts]
 
         batch_start_time = time.time()
@@ -102,7 +122,7 @@ def main(args):
         # assign outputs back to individual artifacts
         per_item_time = batch_time / max(1, len(batch_prompts))
         for j, output in enumerate(outputs):
-            i = start + j
+            i = batch_indices[j]
             prompt = batch_prompts[j]
             jailbroken = jailbreak_evaluator(output)
             if jailbroken:
@@ -122,13 +142,11 @@ def main(args):
             }
 
             results[str(i)] = result
-         
-        full_results_dir = f"{args.results_dir}/{args.attack}/{args.defense_type}"
-        os.makedirs(full_results_dir, exist_ok=True)
-        file_name = f"{args.target_model}_{args.save_suffix}.json"
+
+            processed_prompts.add(prompt.user_text_prompt)
+
         if not args.nosave:
-            with open(f"{full_results_dir}/{file_name}", "w") as json_file:
-                json.dump(results, json_file, indent=4)
+            save_results_file(results_path, results)
 
     print(f"Total inference time: {time.time() - start_time} seconds")
     print(f"Number of jailbroken artifacts: {num_jailbroken} out of {len(attack.prompts)}")
@@ -204,11 +222,6 @@ if __name__ == '__main__':
         '--nosave',
         action="store_true"
     )
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 7fd20c0dd0e2ae1c70154f1c1f2a1ff548a19947
     parser.add_argument("--save_suffix", type=str, default="")
     parser.add_argument(
         '--smoothllm_pert_type',
