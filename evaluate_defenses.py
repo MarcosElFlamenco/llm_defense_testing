@@ -13,8 +13,8 @@ import time
 #import lib.attacks as attacks
 #import lib.language_models as language_models
 #import lib.model_configs as model_configs
-from defenses.defense_factory import get_defense
-from attacks.attack_factory import get_attack
+from defenses.factory import get_defense
+from attacks.factory import get_attack
 import numpy as np
 import torch.nn as nn
 
@@ -70,7 +70,7 @@ def main(args):
 
     # Setup defense
     defense = get_defense(
-        defense_type=args.defense_type,
+        defense_type=args.defense,
         target_model=target_model,
         tokenizer=tokenizer,
         conv_template=conv_template,
@@ -156,11 +156,7 @@ if __name__ == '__main__':
     torch.cuda.empty_cache()
 
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--results_dir',
-        type=str,
-        default='./defense_testing_results'
-    )
+    parser.add_argument('--results_dir',type=str,default='./defense_testing_results')
     parser.add_argument(
         '--trial',
         type=int,
@@ -193,6 +189,7 @@ if __name__ == '__main__':
         type=int,
         default=100000
     )
+
     # SmoothLLM
     parser.add_argument(
         '--smoothllm_num_copies',
@@ -234,7 +231,7 @@ if __name__ == '__main__':
     )
 
     parser.add_argument(
-        '--defense_type',
+        '--defense',
         type=str,
         default='NoDefense',
         choices=[
@@ -260,7 +257,12 @@ if __name__ == '__main__':
         default=8,
         help="Number of prompts to run per generate call (batched inference)."
     )
-
+    parser.add_argument(
+        "--smoothllm_batch_size",
+        type=int,
+        default=8,
+        help="Number of prompts to run per generate call (batched inference)."
+    )
 
     args = parser.parse_args()
     main(args)

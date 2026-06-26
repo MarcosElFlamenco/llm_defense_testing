@@ -103,10 +103,10 @@ class NoDefense(Defense):
         super(NoDefense, self).__init__(target_model,tokenizer, conv_template)
 
     @torch.no_grad()
-    def __call__(self, input, gen_config, batch_size=64):
-        ## Single string inference
-        if isinstance(input, str):
-            self.forward_autodan(input, gen_config)
+    def __call__(self, inputs, gen_config, batch_size=64):
+        ## Single string inference [this should never happen actually]
+        if isinstance(inputs, str):
+            self.forward_autodan(inputs, gen_config)
         else:
             ### Batched inference
             outputs = self.forward_autodan_batch(input, gen_config, batch_size=batch_size)
@@ -124,16 +124,20 @@ class SmoothLLM(Defense):
 
     def __init__(self, 
         target_model,
+        tokenizer,
+        conv_template,
         pert_type,
         pert_pct,
-        num_copies
+        num_copies,
+        smoothllm_batch_size
     ):
-        super(SmoothLLM, self).__init__(target_model)
-        
+        super(SmoothLLM, self).__init__(target_model, tokenizer, conv_template)
+
         self.num_copies = num_copies
         self.perturbation_fn = vars(perturbations)[pert_type](
             q=pert_pct
         )
+        self.smoothllm_batch_size = smoothllm_batch_size
 
     SMOOTH_LLM_TEST_PREFIXES = [
         "I'm sorry", 
@@ -159,12 +163,20 @@ class SmoothLLM(Defense):
             prefix in s for prefix in self.SMOOTH_LLM_TEST_PREFIXES
         ])
 
-    @torch.no_grad()
-    def __call__(self, prompt, batch_size=64, max_new_len=100):
+    def __call__(self, inputs, gen_config, batch_size=64):
+        ##Unwrapping the batch, as the batching will happen within smoothLLM
+        outputs = []
+        for i in range(0, len(inputs)):
+            input = inputs[i]
+            output = self.smooth_llm_single_input(input, gen_config, batch_size=self.smoothllm_batch_size)
+            outputs.append(output)
+        return outputs
 
+    @torch.no_grad()
+    def smooth_llm_single_input(self, input, gen_config, batch_size=64):
         all_inputs = []
         for _ in range(self.num_copies):
-            prompt_copy = copy.deepcopy(prompt)
+            prompt_copy = copy.deepcopy(input)
             #prompt_copy.perturb(self.perturbation_fn)
             prompt_copy.user_text_prompt = self.perturbation_fn(prompt_copy.user_text_prompt)
             all_inputs.append(prompt_copy.user_text_prompt)
@@ -176,14 +188,19 @@ class SmoothLLM(Defense):
             # Get the current batch of inputs
             batch = all_inputs[i * batch_size:(i+1) * batch_size]
             """
-            #This is the original version
+            #This is the original version    parser.add_argument(
+        "--inference_batch_size",
+        type=int,
+        default=8,
+        help="Number of prompts to run per generate call (batched inference)."
+ 
             # Run a forward pass through the LLM for each perturbed copy
             batch_outputs = self.target_model(
                 batch=batch, 
-                max_new_tokens=prompt.max_new_tokens
+                max_new_tokens=gen_config.max_new_tokens
             )
             """
-            batch_outputs = self.forward_autodan_batch(batch, gen_config=prompt.gen_config, batch_size=batch_size)
+            batch_outputs = self.forward_autodan_batch(batch, gen_config=gen_config, batch_size=batch_size)
 
             all_outputs.extend(batch_outputs)
             torch.cuda.empty_cache()
