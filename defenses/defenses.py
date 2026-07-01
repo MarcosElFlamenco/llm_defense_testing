@@ -70,7 +70,7 @@ class Defense:
         all_outputs = []
 
         for i in range(0, len(input_texts), batch_size):
-            batch_texts = handmade_input_texts[i:i+batch_size]
+            batch_texts = input_texts[i:i+batch_size]
 
             # Tokenize batch with padding
             batch_inputs = self.tokenizer(
