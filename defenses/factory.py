@@ -1,5 +1,6 @@
 # defense_factory.py
-from defenses.defenses import NoDefense, SmoothLLM
+from defenses.defenses import NoDefense 
+from defenses.smoothllm import SmoothLLM
 
 def get_defense(defense_type: str, target_model, tokenizer, conv_template, args=None):
     cls = defense_type.lower()
