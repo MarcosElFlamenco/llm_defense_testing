@@ -87,7 +87,6 @@ class autodan_SuffixManager:
                     None,
                     encoding.char_to_token(len(self.conv_template.system))
                 )
-                print(f"system slice: {self._system_slice}")
                 self._user_role_slice = slice(
                     encoding.char_to_token(prompt.find(self.conv_template.roles[0])),
                     encoding.char_to_token(
