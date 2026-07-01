@@ -18,6 +18,7 @@ DEVELOPER_DICT = {
     "mpt-chat": "MosaicML",
     "mpt-instruct": "MosaicML",
     "falcon": "TII",
+    "gemma-7b": "Google"
 }
 
 TEST_PREFIXES = [
