@@ -18,6 +18,15 @@ class DANPrompt(Prompt):
         self.target = target
         self.user_text_prompt = user_text_prompt
 
+class JailbreakArtifact(Prompt):
+    def __init__(self, goal, target, user_text_prompt, attack_type, model_name):
+        self.goal = goal
+        self.target = target
+        self.user_text_prompt = user_text_prompt
+        self.attack_type = attack_type
+        self.model_name = model_name
+
+
 class Attack:
     def __init__(self, logfile, target_model):
         self.logfile = logfile
@@ -61,7 +70,7 @@ class AutoDAN(Attack):
         start_of_user_text = text_prompt.find("[INST]") + len("[INST]") + 1
         user_text_prompt = text_prompt[start_of_user_text:end_of_user_text]
 
-        return DANPrompt(goal, target, final_suffix, user_text_prompt, suffix_manager)
+        return JailbreakArtifact(goal, target, user_text_prompt, "AutoDAN", self.target_model)
 
 ### This would have been a nice implementation,
 ### but the smooth llm code words it differently

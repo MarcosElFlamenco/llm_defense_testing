@@ -11,8 +11,18 @@ class Defense:
         self.tokenizer = tokenizer
         self.conv_template = conv_template
 
-    def forward_autodan(self, user_text_prompt, gen_config):
+    def forward_single_input(self, jailbreak_artifact, gen_config):
+        if jailbreak_artifact.attack_type == "AutoDAN":
+            return self.forward_autodan(jailbreak_artifact, gen_config)
+    def forward_batch(self, jailbreak_artifacts, gen_config, batch_size=64):
+        if jailbreak_artifacts[0].attack_type == "AutoDAN":
+            return self.forward_autodan_batch(
+                jailbreak_artifacts, gen_config, batch_size=batch_size
+            )
 
+    def forward_autodan(self, jailbreak_artifact, gen_config):
+        user_text_prompt = jailbreak_artifact.user_text_prompt
+        ##TODO make this preprocess depend on jailbreak_artifact.model_name
         input_text_prompt = "[INST] " + user_text_prompt + " [/INST]"
         input_toks = self.tokenizer(input_text_prompt).input_ids
         input_ids_user = torch.tensor(input_toks)
@@ -29,16 +39,17 @@ class Defense:
         torch.cuda.empty_cache()
         return gen_str
 
-    def forward_autodan_batch(self, user_text_prompts, gen_config, batch_size=8):
+    def forward_autodan_batch(self, jailbreak_artifacts, gen_config, batch_size=8):
         """Batched inference for a list of user_text_prompts.
 
         Returns a list of decoded string outputs in the same order as inputs.
         """
-        if not isinstance(user_text_prompts, (list, tuple)):
-            raise ValueError(f"user_text_prompts must be a list or tuple for batched inference \n Currently {user_text_prompts}")
+        if not isinstance(jailbreak_artifacts, (list, tuple)):
+            raise ValueError(f"jailbreak_artifacts must be a list or tuple for batched inference \n Currently {jailbreak_artifacts}")
 
         # Format prompts
-        input_texts = ["[INST] " + p + " [/INST]" for p in user_text_prompts]
+        ##TODO make this preprocess depend on jailbreak_artifact.model_name
+        input_texts = ["[INST] " + artifact.user_text_prompt + " [/INST]" for artifact in jailbreak_artifacts]
         all_outputs = []
 
         for i in range(0, len(input_texts), batch_size):
@@ -99,11 +110,13 @@ class NoDefense(Defense):
 
     @torch.no_grad()
     def __call__(self, inputs, gen_config, batch_size=64):
-        ## Single string inference [this should never happen actually]
+
         if isinstance(inputs, str):
-            self.forward_autodan(inputs, gen_config)
+            ## No reason this should ever happen 
+            output = self.forward_single_input(inputs, gen_config)
+            return output
         else:
             ### Batched inference
-            outputs = self.forward_autodan_batch(inputs, gen_config, batch_size=batch_size)
+            outputs = self.forward_batch(inputs, gen_config, batch_size=batch_size)
             return outputs
 

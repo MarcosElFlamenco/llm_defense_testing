@@ -112,9 +112,9 @@ def main(args):
             continue
 
         print(f"Evaluating artifacts {batch_indices[0]}..{batch_indices[-1]}...")
-        user_texts = [p.user_text_prompt for p in batch_prompts]
+
         batch_start_time = time.time()
-        outputs = defense(user_texts, gen_config, batch_size=batch_size)
+        outputs = defense(batch_prompts, gen_config, batch_size=batch_size)
         batch_time = time.time() - batch_start_time
 
         # assign outputs back to individual artifacts
