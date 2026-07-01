@@ -104,6 +104,6 @@ class NoDefense(Defense):
             self.forward_autodan(inputs, gen_config)
         else:
             ### Batched inference
-            outputs = self.forward_autodan_batch(input, gen_config, batch_size=batch_size)
+            outputs = self.forward_autodan_batch(inputs, gen_config, batch_size=batch_size)
             return outputs
 
