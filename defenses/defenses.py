@@ -22,15 +22,11 @@ class Defense:
             )
 
     def forward_autodan(self, jailbreak_artifact, gen_config):
-        #user_text_prompt = jailbreak_artifact.user_text_prompt
-        ##TODO make this preprocess depend on jailbreak_artifact.model_name
-
         conv_template = load_conversation_template(jailbreak_artifact.model_name)
         conv_template.append_message(conv_template.roles[0], f"{jailbreak_artifact.user_text_prompt}")
+        conv_template.append_message(conv_template.roles[1], "")
 
         input_text_prompt = conv_template.get_prompt()
-        handmade_input_text_prompt = "[INST] " + jailbreak_artifact.user_text_prompt + " [/INST]"
-        print(f"input_text_prompt: {input_text_prompt} \n handmade_input_text_prompt: {handmade_input_text_prompt} \n identical {input_text_prompt == handmade_input_text_prompt}")
         input_toks = self.tokenizer(input_text_prompt).input_ids
         input_ids_user = torch.tensor(input_toks)
 
@@ -55,19 +51,14 @@ class Defense:
             raise ValueError(f"jailbreak_artifacts must be a list or tuple for batched inference \n Currently {jailbreak_artifacts}")
 
         # Format prompts
-        ##TODO make this preprocess depend on jailbreak_artifact.model_name
 
         conv_template = load_conversation_template(jailbreak_artifacts[0].model_name)
-        handmade_input_texts = ["[INST] " + artifact.user_text_prompt + " [/INST]" for artifact in jailbreak_artifacts]
         input_texts = []
         for artifact in jailbreak_artifacts:
             conv_template.append_message(conv_template.roles[0], f"{artifact.user_text_prompt}")
             conv_template.append_message(conv_template.roles[1], "")
             input_text_prompt = conv_template.get_prompt()
             input_texts.append(input_text_prompt)
-
-        element_to_print = 0
-        print(f"handmade_input_texts: {handmade_input_texts[element_to_print]} \n input_texts: {input_texts[element_to_print]} \n identical {handmade_input_texts[element_to_print] == input_texts[element_to_print]}")
 
         all_outputs = []
 
