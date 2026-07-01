@@ -1,5 +1,5 @@
 
-MODEL_NAME = google/gemma-7b
+MODEL_NAME = lmsys/vicuna-7b-v1.5
 
 download_model:
 	hf download $(MODEL_NAME)
@@ -40,8 +40,8 @@ autodan:
 	python AutoDAN/autodan_eval.py \
 		--attack_mode hga \
 		--max_new_tokens 128 \
-		--save_suffix raftry \
-		--model llama3 \
+		--save_suffix van \
+		--model vicuna \
 
 nightrun:
 	python evaluate_defenses.py \

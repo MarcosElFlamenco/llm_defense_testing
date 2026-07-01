@@ -45,7 +45,7 @@ class AutoDAN(Attack):
 
         # Enables obj[i]
         self.prompts = [
-            self.create_prompt(goal=artifact["goal"], target=artifact["target"], final_suffix=artifact["final_suffix"])
+            self.create_prompt(goal=artifact["goal"], final_suffix=artifact["final_suffix"])
             for artifact in log.values()
         ]
 
