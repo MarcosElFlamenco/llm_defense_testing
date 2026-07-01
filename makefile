@@ -8,15 +8,15 @@ download_model:
 TARGET_MODEL = llama2
 LOG_FILE = data/AutoDAN/llama-2-7b-chat-hf_behaviors.json
 ATTACK = AUTODAN
-SAVE_SUFFIX = modeladapt 
+SAVE_SUFFIX = defenseclean
 
 evaluate:
 	python evaluate_defenses.py \
 		--attack $(ATTACK) \
-		--attack_logfile "AutoDAN/results/autodan_hga/llama2_0_normal_debug.json" \
+		--attack_logfile "AutoDAN/results/autodan_hga/llama2_0_regular.json" \
 		--max_new_tokens 512 \
 		--save_suffix $(SAVE_SUFFIX) \
-		--inference_batch_size 1
+		--inference_batch_size 6
 
 confirm_determinism:
 	python dictionary_utils.py \
