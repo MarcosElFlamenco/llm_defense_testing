@@ -27,8 +27,6 @@ class Defense:
         conv_template.append_message(conv_template.roles[1], "")
 
         input_text_prompt = conv_template.get_prompt()
-        handmade_input_text_prompt = "[INST] " + jailbreak_artifact.user_text_prompt + " [/INST]"
-        print(f"input_text_prompt: {input_text_prompt} \n handmade_input_text_prompt: {handmade_input_text_prompt} \n identical {input_text_prompt == handmade_input_text_prompt}")
         input_toks = self.tokenizer(input_text_prompt).input_ids
         input_ids_user = torch.tensor(input_toks)
 
@@ -53,10 +51,8 @@ class Defense:
             raise ValueError(f"jailbreak_artifacts must be a list or tuple for batched inference \n Currently {jailbreak_artifacts}")
 
         # Format prompts
-        ##TODO make this preprocess depend on jailbreak_artifact.model_name
 
         conv_template = load_conversation_template(jailbreak_artifacts[0].model_name)
-        handmade_input_texts = ["[INST] " + artifact.user_text_prompt + " [/INST]" for artifact in jailbreak_artifacts]
         input_texts = []
         for artifact in jailbreak_artifacts:
             conv_template.messages = []
@@ -65,7 +61,6 @@ class Defense:
             input_text_prompt = conv_template.get_prompt()
             input_texts.append(input_text_prompt)
 
-        print(f"handmade_input_texts: {handmade_input_texts} \n input_texts: {input_texts} \n identical {handmade_input_texts == input_texts}")
 
         all_outputs = []
 
