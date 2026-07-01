@@ -6,17 +6,11 @@ from AutoDAN.utils.string_utils import autodan_SuffixManager
 from AutoDAN.utils.eval_utils import generate
 #import lib.perturbations as perturbations
 
-## Not used yet, will certainly be used to wrap returns later
+## Prompts
 class Prompt:
     def __init__(self, full_prompt, perturbable_prompt, max_new_tokens):
         self.full_prompt = full_prompt
         self.perturbable_prompt = perturbable_prompt
-
-class DANPrompt(Prompt):
-    def __init__(self, goal, target, final_suffix, user_text_prompt, suffix_manager):
-        self.goal = goal
-        self.target = target
-        self.user_text_prompt = user_text_prompt
 
 class JailbreakArtifact(Prompt):
     def __init__(self, goal, target, user_text_prompt, attack_type, model_name):
@@ -27,6 +21,8 @@ class JailbreakArtifact(Prompt):
         self.model_name = model_name
 
 
+
+### Attacks
 class Attack:
     def __init__(self, logfile, target_model):
         self.logfile = logfile
@@ -64,12 +60,15 @@ class AutoDAN(Attack):
             adv_string=final_suffix,
         )
         text_prompt = suffix_manager.get_prompt(adv_string=final_suffix)
+
+        user_text_prompt = final_suffix.replace('[REPLACE]', goal.lower()) ## note this line is from string utils
+
         ## TODO this should depend on model name also
         end_of_user_text = text_prompt.find("[/INST]") - 1
         assert text_prompt.startswith("[INST]")
         start_of_user_text = text_prompt.find("[INST]") + len("[INST]") + 1
-        user_text_prompt = text_prompt[start_of_user_text:end_of_user_text]
-
+        handmade_user_text_prompt = text_prompt[start_of_user_text:end_of_user_text]
+        print(f"handmade_user_text_prompt: {handmade_user_text_prompt} \n user_text_prompt: {user_text_prompt} \n identical {handmade_user_text_prompt == user_text_prompt}")
         return JailbreakArtifact(goal, target, user_text_prompt, "AutoDAN", self.target_model)
 
 ### This would have been a nice implementation,
