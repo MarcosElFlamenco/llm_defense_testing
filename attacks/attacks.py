@@ -64,7 +64,7 @@ class AutoDAN(Attack):
             adv_string=final_suffix,
         )
         text_prompt = suffix_manager.get_prompt(adv_string=final_suffix)
-
+        ## TODO this should depend on model name also
         end_of_user_text = text_prompt.find("[/INST]") - 1
         assert text_prompt.startswith("[INST]")
         start_of_user_text = text_prompt.find("[INST]") + len("[INST]") + 1
