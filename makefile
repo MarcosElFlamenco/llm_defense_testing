@@ -8,7 +8,7 @@ download_model:
 TARGET_MODEL = llama2
 LOG_FILE = data/AutoDAN/llama-2-7b-chat-hf_behaviors.json
 ATTACK = AUTODAN
-SAVE_SUFFIX = nnhdmadeattack
+SAVE_SUFFIX = non 
 
 evaluate:
 	python evaluate_defenses.py \
@@ -39,8 +39,9 @@ smooth_llm_evaluate:
 autodan:
 	python AutoDAN/autodan_eval.py \
 		--attack_mode hga \
+		--dataset_path data/advbench/smaller_behaviors.csv \
 		--max_new_tokens 128 \
-		--save_suffix van \
+		--save_suffix normal \
 		--model vicuna \
 
 nightrun:
