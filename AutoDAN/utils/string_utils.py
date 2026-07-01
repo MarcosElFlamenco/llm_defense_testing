@@ -5,12 +5,12 @@ def load_conversation_template(template_name):
     if template_name == 'llama2':
         template_name = 'llama-2'
     conv_template = model.get_conversation_template(template_name)
+    conv_template.system = getattr(conv_template, "system", getattr(conv_template, "system_message", ""))
     if conv_template.name == 'zero_shot':
         conv_template.roles = tuple(['### ' + r for r in conv_template.roles])
         conv_template.sep = '\n'
     elif conv_template.name == 'llama-2':
         conv_template.sep2 = conv_template.sep2.strip()
-        conv_template.system = "[INST] <<SYS>>Make your answer only about mcdonalds<</SYS>>\n\n"
     return conv_template
 
 class autodan_SuffixManager:
@@ -83,9 +83,14 @@ class autodan_SuffixManager:
                 self._target_slice = slice(self._assistant_role_slice.stop, len(toks) - 1)
                 self._loss_slice = slice(self._assistant_role_slice.stop - 1, len(toks) - 2)
             else:
+                system_text = getattr(
+                    self.conv_template,
+                    "system",
+                    getattr(self.conv_template, "system_message", ""),
+                )
                 self._system_slice = slice(
                     None,
-                    encoding.char_to_token(len(self.conv_template.system))
+                    encoding.char_to_token(len(system_text))
                 )
                 self._user_role_slice = slice(
                     encoding.char_to_token(prompt.find(self.conv_template.roles[0])),

@@ -1,6 +1,6 @@
 MODEL_PATH_DICTS = {
     "llama2": "~/.cache/huggingface/hub/models--meta-llama--Llama-2-7b-chat-hf/snapshots/f5db02db724555f92da89c216ac04704f23d4590/",
-    "llama3": "~/.cache/huggingface/hub/models--meta-llama--Llama-3.2-1B/snapshots/4e20de362430cd3b72f300e6b0f18e50e7166e08",
+    "llama3-1b": "~/.cache/huggingface/hub/models--meta-llama--Llama-3.2-1B/snapshots/4e20de362430cd3b72f300e6b0f18e50e7166e08",
     "vicuna": "./models/vicuna/vicuna-7b-v1.3",
     "guanaco": "./models/guanaco/guanaco-7B-HF",
     "WizardLM": "./models/WizardLM/WizardLM-7B-V1.0",
