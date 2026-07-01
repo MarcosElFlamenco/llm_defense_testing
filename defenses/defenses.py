@@ -62,6 +62,7 @@ class Defense:
         input_texts = []
         for artifact in jailbreak_artifacts:
             conv_template.append_message(conv_template.roles[0], f"{artifact.user_text_prompt}")
+            conv_template.append_message(conv_template.roles[1], "")
             input_text_prompt = conv_template.get_prompt()
             input_texts.append(input_text_prompt)
 
