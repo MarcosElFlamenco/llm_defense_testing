@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 import gc
-from AutoDAN.utils.string_utils import autodan_SuffixManager
+from AutoDAN.utils.string_utils import autodan_SuffixManager, load_conversation_template
 from AutoDAN.utils.eval_utils import generate, generate_from_user_text, check_for_attack_success
 
 class Defense:
@@ -14,6 +14,7 @@ class Defense:
     def forward_single_input(self, jailbreak_artifact, gen_config):
         if jailbreak_artifact.attack_type == "AutoDAN":
             return self.forward_autodan(jailbreak_artifact, gen_config)
+
     def forward_batch(self, jailbreak_artifacts, gen_config, batch_size=64):
         if jailbreak_artifacts[0].attack_type == "AutoDAN":
             return self.forward_autodan_batch(
@@ -21,9 +22,15 @@ class Defense:
             )
 
     def forward_autodan(self, jailbreak_artifact, gen_config):
-        user_text_prompt = jailbreak_artifact.user_text_prompt
+        #user_text_prompt = jailbreak_artifact.user_text_prompt
         ##TODO make this preprocess depend on jailbreak_artifact.model_name
-        input_text_prompt = "[INST] " + user_text_prompt + " [/INST]"
+
+        conv_template = load_conversation_template(jailbreak_artifact.model_name)
+        conv_template.append_message(conv_template.roles[0], f"{jailbreak_artifact.user_text_prompt}")
+
+        input_text_prompt = conv_template.get_prompt()
+        handmade_input_text_prompt = "[INST] " + jailbreak_artifact.user_text_prompt + " [/INST]"
+        print(f"input_text_prompt: {input_text_prompt} \n handmade_input_text_prompt: {handmade_input_text_prompt} \n identical {input_text_prompt == handmade_input_text_prompt}")
         input_toks = self.tokenizer(input_text_prompt).input_ids
         input_ids_user = torch.tensor(input_toks)
 
@@ -49,7 +56,18 @@ class Defense:
 
         # Format prompts
         ##TODO make this preprocess depend on jailbreak_artifact.model_name
-        input_texts = ["[INST] " + artifact.user_text_prompt + " [/INST]" for artifact in jailbreak_artifacts]
+
+        conv_template = load_conversation_template(jailbreak_artifacts[0].model_name)
+        handmade_input_texts = ["[INST] " + artifact.user_text_prompt + " [/INST]" for artifact in jailbreak_artifacts]
+        input_texts = []
+        for artifact in jailbreak_artifacts:
+            conv_template.append_message(conv_template.roles[0], f"{artifact.user_text_prompt}")
+            input_text_prompt = conv_template.get_prompt()
+            input_texts.append(input_text_prompt)
+
+        element_to_print = 0
+        print(f"handmade_input_texts: {handmade_input_texts[element_to_print]} \n input_texts: {input_texts[element_to_print]} \n identical {handmade_input_texts[element_to_print] == input_texts[element_to_print]}")
+
         all_outputs = []
 
         for i in range(0, len(input_texts), batch_size):
