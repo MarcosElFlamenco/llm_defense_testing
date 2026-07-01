@@ -8,7 +8,7 @@ download_model:
 TARGET_MODEL = llama2
 LOG_FILE = data/AutoDAN/llama-2-7b-chat-hf_behaviors.json
 ATTACK = AUTODAN
-SAVE_SUFFIX = nonhandmade
+SAVE_SUFFIX = nnhdmadeattack
 
 evaluate:
 	python evaluate_defenses.py \
