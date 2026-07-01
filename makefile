@@ -13,10 +13,10 @@ SAVE_SUFFIX = refacto
 evaluate:
 	python evaluate_defenses.py \
 		--attack $(ATTACK) \
-		--attack_logfile "AutoDAN/results/autodan_hga/llama2_0_complete.json" \
+		--attack_logfile "AutoDAN/results/autodan_hga/llama2_0_regular.json" \
 		--max_new_tokens 512 \
 		--save_suffix $(SAVE_SUFFIX) \
-		--inference_batch_size 8	
+		--inference_batch_size 6
 
 confitrm_determinism:
 	python dictionary_utils.py \
@@ -44,11 +44,12 @@ autodan:
 		--model gemma-7b \
 
 nightrun:
-	python AutoDAN/autodan_eval.py \
-		--attack_mode hga \
-		--max_new_tokens 128 \
-		--save_suffix nightrun \
-
+	python evaluate_defenses.py \
+		--attack $(ATTACK) \
+		--attack_logfile "AutoDAN/results/autodan_hga/llama2_0_regular.json" \
+		--max_new_tokens 512 \
+		--save_suffix $(SAVE_SUFFIX) \
+		--inference_batch_size 8	
 megadan:
 	python AutoDAN/autodan_eval.py \
 		--attack_mode hga \
