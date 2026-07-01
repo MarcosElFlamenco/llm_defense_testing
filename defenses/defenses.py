@@ -64,8 +64,7 @@ class Defense:
             input_text_prompt = conv_template.get_prompt()
             input_texts.append(input_text_prompt)
 
-        element_to_print = 0
-        print(f"handmade_input_texts: {handmade_input_texts[element_to_print]} \n input_texts: {input_texts[element_to_print]} \n identical {handmade_input_texts[element_to_print] == input_texts[element_to_print]}")
+        print(f"handmade_input_texts: {handmade_input_texts} \n input_texts: {input_texts} \n identical {handmade_input_texts == input_texts}")
 
         all_outputs = []
 
