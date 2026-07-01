@@ -35,7 +35,7 @@ class Defense:
         Returns a list of decoded string outputs in the same order as inputs.
         """
         if not isinstance(user_text_prompts, (list, tuple)):
-            raise ValueError("user_text_prompts must be a list or tuple for batched inference")
+            raise ValueError(f"user_text_prompts must be a list or tuple for batched inference \n Currently {user_text_prompts}")
 
         # Format prompts
         input_texts = ["[INST] " + p + " [/INST]" for p in user_text_prompts]
