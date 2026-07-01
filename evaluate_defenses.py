@@ -85,7 +85,7 @@ def main(args):
     attack = get_attack(
         args.attack, 
         logfile = args.attack_logfile, 
-        target_model = template_name
+        target_model = template_name,
         tokenizer = tokenizer, 
         conv_template = conv_template
     )
