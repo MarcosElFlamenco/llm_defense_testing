@@ -62,8 +62,8 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description="Confirm determinism between attack and defense outputs.")
-    parser.add_argument("reference_outputs", type=str, help="Path to the attack logfile (JSON).")
-    parser.add_argument("new_outputs", type=str, help="Path to the defense testing results (JSON).")
+    parser.add_argument("--reference_outputs", type=str, help="Path to the attack logfile (JSON).")
+    parser.add_argument("--new_outputs", type=str, help="Path to the defense testing results (JSON).")
 
     args = parser.parse_args()
 
