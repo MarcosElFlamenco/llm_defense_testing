@@ -43,6 +43,7 @@ def build_arg_parser():
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--continue_after_jailbroken", action="store_true")
     parser.add_argument("--API_key", type=str, default=None)
+    parser.add_argument("--quantize", action="store_true")
     return parser
 
 
@@ -81,6 +82,7 @@ def run_autodan_eval(args, attack_mode="ga"):
         low_cpu_mem_usage=True,
         use_cache=False,
         device=device,
+        quantize=args.quantize
     )
 
     dtypes = set()
