@@ -1,3 +1,4 @@
+from pyexpat import model
 import os, sys
 import gc
 import json
@@ -81,6 +82,12 @@ def run_autodan_eval(args, attack_mode="ga"):
         use_cache=False,
         device=device,
     )
+
+    dtypes = set()
+    for name, param in model.named_parameters():
+        dtypes.add(param.dtype)
+    print(f"model parameters are {dtypes}")
+
     conv_template = load_conversation_template(template_name)
     harmful_data = pd.read_csv(args.dataset_path)
     crit = nn.CrossEntropyLoss(reduction="mean")

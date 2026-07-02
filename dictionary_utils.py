@@ -1,6 +1,50 @@
 ## Confirm determinism
 import json
 
+def print_keys(results):
+    print(results["0"].keys())
+
+def list_jailbroken(results):
+    for prompt_number in results.keys():
+        print(f"{prompt_number}: {results[prompt_number]['goal']} : JAILBROKEN:{results[prompt_number]['is_success']}")
+
+def count_jailbroken(results):
+    jailbroken_count = 0
+    for prompt_number in results.keys():
+        if results[prompt_number]['is_success']:
+            jailbroken_count += 1
+    print(f"Total jailbroken prompts: {jailbroken_count} out of {len(results)}")
+    return jailbroken_count
+
+def expose_artifact(results, key):
+    for element in results[key].keys():
+        print(f"{element}:           {results[key][element]}")
+
+def print_jailbroken(results, number = None):
+    if number is None:
+        for prompt_number in results.keys():
+            if results[prompt_number]['is_success']:
+                print(f"{prompt_number}: {results[prompt_number]['goal']} : \n OUTPUT: {results[prompt_number]['final_respond']}")
+    else:
+        if results[number]['is_success']:
+            print(f"{number}: {results[number]['goal']} : \n OUTPUT: {results[number]['final_respond']}")
+        else:
+            print(f"{number} is not jailbroken.")
+
+def print_jailbreak(results, number):
+    print(f"{number}: {results[number]['final_suffix']}")
+
+def check_in_log_for_differences(results):
+    current_suf = ""
+    for suf in results[prompt_number]["log"]["suffix"]:
+        if suf == current_suf:
+            print(f"...")
+        current_suf = suf
+        print(suf)
+
+def print_output(results, prompt_number):
+    print(f"FINAL RESPOND: \n\n {results[prompt_number]['final_respond']}")
+
 def first_difference_index(a, b):
     max_idx = min(len(a), len(b))
     for i in range(max_idx):
