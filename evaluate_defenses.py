@@ -64,6 +64,7 @@ def main(args):
         low_cpu_mem_usage=True,
         use_cache=False,
         device=device,
+        quantize=args.quantize
     )
     print(f"Success: loaded model from path {model_path}")
 

@@ -43,6 +43,7 @@ autodan:
 		--max_new_tokens 128 \
 		--save_suffix normal \
 		--model gemma-7b \
+		--quantize
 
 nightrun:
 	python evaluate_defenses.py \
@@ -54,9 +55,8 @@ nightrun:
 		--inference_batch_size 1 \
 		--smoothllm_pert_type RandomSwapPerturbation \
 		--smoothllm_pert_pct 10 \
-		--smoothllm_num_copies 7 \
+		--smoothllm_num_copies 7 \	
 		--smoothllm_batch_size 7
-
 
 megadan:
 	python AutoDAN/autodan_eval.py \
