@@ -80,13 +80,10 @@ class SmoothLLM(Defense):
 
             # Get the current batch of inputs
             batch = all_inputs[i * smoothllm_batch_size:(i+1) * smoothllm_batch_size]
+            print(f"batch size is {self.smooth_llm_single_input}")
+            print(f"batch is {batch}")
             """
-            #This is the original version    parser.add_argument(
-        "--inference_batch_size",
-        type=int,
-        default=8,
-        help="Number of prompts to run per generate call (batched inference)."
- 
+            #This is the original version
             # Run a forward pass through the LLM for each perturbed copy
             batch_outputs = self.target_model(
                 batch=batch, 
