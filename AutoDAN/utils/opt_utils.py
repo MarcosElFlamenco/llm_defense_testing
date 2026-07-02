@@ -1,7 +1,7 @@
 import gc
 import numpy as np
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer, logging
+from transformers import AutoModelForCausalLM, AutoTokenizer, logging,BitsAndBytesConfig 
 import random
 import openai
 from tqdm import tqdm
@@ -36,11 +36,15 @@ def forward(*, model, input_ids, attention_mask, batch_size=512):
     return torch.cat(logits, dim=0)
 
 
-def load_model_and_tokenizer(model_path, tokenizer_path=None, device='cuda:0', **kwargs):
+def load_model_and_tokenizer(model_path, tokenizer_path=None, device='cuda:0', quantize=False, **kwargs):
+    if quantize:
+        quant_config = BitsAndBytesConfig(load_in_4bit=True)  # or load_in_8bit=True
+
     model = AutoModelForCausalLM.from_pretrained(
         model_path,
         dtype=torch.float16,
         trust_remote_code=True,
+        quantization_config=quant_config if quantize else None,
         **kwargs
     ).to(device).eval()
 
