@@ -5,6 +5,7 @@ import string
 import copy
 import random
 import torch
+import numpy as np
 
 class SmoothLLM(Defense):
 
@@ -76,17 +77,12 @@ class SmoothLLM(Defense):
 
         # Iterate each batch of inputs
         all_outputs = []
-        print(f"num_copies is {self.num_copies}")
-        print(f"smoothllm_batch_size is {self.smoothllm_batch_size}")
-        print(f"range is {self.num_copies // self.smoothllm_batch_size + 1}")
         for i in range(self.num_copies // self.smoothllm_batch_size + 1):
 
             # Get the current batch of inputs
             batch = all_inputs[i * self.smoothllm_batch_size:(i+1) * self.smoothllm_batch_size]
             if batch == []:
                 break
-            print(f"batch size is {self.smooth_llm_batch_size}")
-            print(f"batch is {batch}")
             """
             #This is the original version
             # Run a forward pass through the LLM for each perturbed copy
