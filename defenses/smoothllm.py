@@ -62,12 +62,12 @@ class SmoothLLM(Defense):
         outputs = []
         for i in range(0, len(inputs)):
             input = inputs[i]
-            output = self.smooth_llm_single_input(input, gen_config, smoothllm_batch_size=self.smoothllm_batch_size)
+            output = self.smooth_llm_single_input(input, gen_config)
             outputs.append(output)
         return outputs
 
     @torch.no_grad()
-    def smooth_llm_single_input(self, input, gen_config, smoothllm_batch_size=64):
+    def smooth_llm_single_input(self, input, gen_config):
         all_inputs = []
         for i in range(self.num_copies):
             artifact_copy = copy.deepcopy(input)
@@ -76,11 +76,16 @@ class SmoothLLM(Defense):
 
         # Iterate each batch of inputs
         all_outputs = []
-        for i in range(self.num_copies // smoothllm_batch_size + 1):
+        print(f"num_copies is {self.num_copies}")
+        print(f"smoothllm_batch_size is {self.smoothllm_batch_size}")
+        print(f"range is {self.num_copies // self.smoothllm_batch_size + 1}")
+        for i in range(self.num_copies // self.smoothllm_batch_size + 1):
 
             # Get the current batch of inputs
-            batch = all_inputs[i * smoothllm_batch_size:(i+1) * smoothllm_batch_size]
-            print(f"batch size is {self.smooth_llm_single_input}")
+            batch = all_inputs[i * self.smoothllm_batch_size:(i+1) * self.smoothllm_batch_size]
+            if batch == []:
+                break
+            print(f"batch size is {self.smooth_llm_batch_size}")
             print(f"batch is {batch}")
             """
             #This is the original version
@@ -90,7 +95,7 @@ class SmoothLLM(Defense):
                 max_new_tokens=gen_config.max_new_tokens
             )
             """
-            batch_outputs = self.forward_autodan_batch(batch, gen_config=gen_config, batch_size=smoothllm_batch_size)
+            batch_outputs = self.forward_autodan_batch(batch, gen_config=gen_config, batch_size=self.smoothllm_batch_size)
 
             all_outputs.extend(batch_outputs)
             torch.cuda.empty_cache()
