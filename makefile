@@ -42,14 +42,14 @@ autodan:
 		--dataset_path data/advbench/smaller_behaviors.csv \
 		--max_new_tokens 128 \
 		--save_suffix normal \
-		--model vicuna \
+		--model gemma-7b \
 
 nightrun:
 	python evaluate_defenses.py \
 		--attack $(ATTACK) \
-		--attack_logfile "AutoDAN/results/autodan_hga/llama2_0_regular.json" \
+		--attack_logfile "AutoDAN/results/autodan_hga/llama2_0_complete.json" \
 		--max_new_tokens 512 \
-		--save_suffix $(SAVE_SUFFIX) \
+		--save_suffix complete \
 		--inference_batch_size 8	
 megadan:
 	python AutoDAN/autodan_eval.py \
