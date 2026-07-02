@@ -57,17 +57,17 @@ class SmoothLLM(Defense):
             prefix in s for prefix in self.SMOOTH_LLM_TEST_PREFIXES
         ])
 
-    def __call__(self, inputs, gen_config, batch_size=64):
+    def __call__(self, inputs, gen_config, batch_size=1):
         ##Unwrapping the batch, as the batching will happen within smoothLLM
         outputs = []
         for i in range(0, len(inputs)):
             input = inputs[i]
-            output = self.smooth_llm_single_input(input, gen_config, batch_size=self.smoothllm_batch_size)
+            output = self.smooth_llm_single_input(input, gen_config, smoothllm_batch_size=self.smoothllm_batch_size)
             outputs.append(output)
         return outputs
 
     @torch.no_grad()
-    def smooth_llm_single_input(self, input, gen_config, batch_size=64):
+    def smooth_llm_single_input(self, input, gen_config, smoothllm_batch_size=64):
         all_inputs = []
         for i in range(self.num_copies):
             artifact_copy = copy.deepcopy(input)
@@ -76,10 +76,10 @@ class SmoothLLM(Defense):
 
         # Iterate each batch of inputs
         all_outputs = []
-        for i in range(self.num_copies // batch_size + 1):
+        for i in range(self.num_copies // smoothllm_batch_size + 1):
 
             # Get the current batch of inputs
-            batch = all_inputs[i * batch_size:(i+1) * batch_size]
+            batch = all_inputs[i * smoothllm_batch_size:(i+1) * smoothllm_batch_size]
             """
             #This is the original version    parser.add_argument(
         "--inference_batch_size",
@@ -93,7 +93,7 @@ class SmoothLLM(Defense):
                 max_new_tokens=gen_config.max_new_tokens
             )
             """
-            batch_outputs = self.forward_autodan_batch(batch, gen_config=gen_config, batch_size=batch_size)
+            batch_outputs = self.forward_autodan_batch(batch, gen_config=gen_config, batch_size=smoothllm_batch_size)
 
             all_outputs.extend(batch_outputs)
             torch.cuda.empty_cache()
