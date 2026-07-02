@@ -70,10 +70,9 @@ class SmoothLLM(Defense):
     def smooth_llm_single_input(self, input, gen_config, batch_size=64):
         all_inputs = []
         for i in range(self.num_copies):
-            text_prompt_copy = copy.deepcopy(input)
-            #prompt_copy.perturb(self.perturbation_fn)
-            text_prompt_copy = self.perturbation_fn(text_prompt_copy)
-            all_inputs.append(text_prompt_copy)
+            artifact_copy = copy.deepcopy(input)
+            artifact_copy.user_text_prompt = self.perturbation_fn(artifact_copy.user_text_prompt)
+            all_inputs.append(artifact_copy)
 
         # Iterate each batch of inputs
         all_outputs = []
