@@ -48,9 +48,16 @@ nightrun:
 	python evaluate_defenses.py \
 		--attack $(ATTACK) \
 		--attack_logfile "AutoDAN/results/autodan_hga/llama2_0_complete.json" \
-		--max_new_tokens 512 \
-		--save_suffix complete \
-		--inference_batch_size 8	
+		--defense SmoothLLM \
+		--max_new_tokens 256 \
+		--save_suffix swap7 \
+		--inference_batch_size 1 \
+		--smoothllm_pert_type RandomSwapPerturbation \
+		--smoothllm_pert_pct 10 \
+		--smoothllm_num_copies 7 \	
+		--smoothllm_batch_size 7
+
+
 megadan:
 	python AutoDAN/autodan_eval.py \
 		--attack_mode hga \
