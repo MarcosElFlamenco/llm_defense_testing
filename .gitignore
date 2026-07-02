@@ -16,5 +16,6 @@ sandbox.ipynb
 logger.log
 notepad.txt
 AutoDAN/results/autodan_hga/llama2_0_nightrun.json
+
 defense_testing_results/AUTODAN/SmoothLLM/llama2_swap7.json
 
